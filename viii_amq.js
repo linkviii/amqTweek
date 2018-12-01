@@ -1,6 +1,7 @@
 
 // Paste into brower console
 // Tested with firefox
+// AMQ uses jquery so might as well go all in with it?
 
 var viii_is_attached;
 function logAnsInChat() {
@@ -29,14 +30,16 @@ function viii_get_watched() {
 function viii_parse_keys(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
 	
-	
+	// Probably a better way to go about this but, it works.
 	let map = {'tab':9, 'enter':13, ',':188, '.':190, '/':191};
 	
 	if (key === map['tab']) {
 		const active = document.activeElement.id;
 		if (active === "qpAnswerInput" || quiz.$input[0].disabled) {
+			$("#gcInput")[0].click();
 			$("#gcInput").focus();
 		} else {
+			quiz.$input[0].click();
 			quiz.$input.focus();
 		}
 	}
@@ -47,11 +50,18 @@ function viii_parse_keys(e) {
 
 		switch (key) {
 		case map['enter']:
-			skipController.toggle();				
+			if (lobby.inLobby) {
+				lobby.fireMainButtonEvent();
+			} else {
+				skipController.toggle();				
+			}
 			break;
 		case map['/']:
 			quiz.$input.val('');
 			break;
+		case map[',']:
+			
+		break;
 
 		}
 	}
