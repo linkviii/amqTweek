@@ -18,14 +18,46 @@
  *  
  */ 
 
-
+ // probably is some way to find the logged in player's username...
+var viii_userName = "linkviii";
 var viii_isAttached;
+
+t00_nameFromAvatarElem = function( elem ) {
+    return elem.id.substr(9);
+}
+
+// Probably better ways to do this but I guess it works...
+function viii_isCorrect(username) {
+	let avatarElems = document.getElementsByClassName("qpAvatarContainer");
+
+	let playerNum;
+	let playerNames = [];
+	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+		playerNames.push( t00_nameFromAvatarElem(avatarElems[playerNum]) );
+	}
+	
+	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+		const name = playerNames[playerNum];
+		if (name === username) {
+			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");
+			//const answer = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerText")[0].innerText;
+			return correct;
+		}
+	}
+	console.error("Did not find username '" + username + "' in players list.");
+	return false;
+}
+
 function viii_logAnsInChat() {
 	
 	// For local messages it seems AMQ just injects html.
 	// No reason not to do that I guess. 
+	let correct = viii_isCorrect(viii_userName);
+	let color = correct ? "green" : "red";
 
-	let count = $("#qpCurrentSongCount").text() + " / " + $("#qpTotalSongCount").text();
+	let count = $("#qpCurrentSongCount").text();
+	let total = $("#qpTotalSongCount").text();
+	let progress = '<span style="color:' + color + ';" >' + count + '</span> / ' + total;
 	let anime = $("#qpAnimeName").text();
 	
 	let type = $("#qpSongType").text();
@@ -34,11 +66,12 @@ function viii_logAnsInChat() {
 	let linkSrc = $("#qpSongVideoLink")[0].href;
 	let linkTag = '<a href="' + linkSrc + '" target="_blank"> [+] </a>';
 
-	let a = count + ": " + anime + " " + linkTag;
+	let a = progress + ": " + anime + " " + linkTag;
 	let b = type + ": " + song + " <b>[by]</b> " + artist;
 	
 	gameChat.systemMessage(a, b);
 	
+	// TODO check for last song and report score.
 }
 
 /**
