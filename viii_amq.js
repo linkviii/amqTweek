@@ -10,6 +10,15 @@
 // Namespacing my global js with 'viii'. 
 // Probably could use an object or something but, eh, keeping it simple.
 
+/*
+ * Global amq objects:
+ * quiz
+ * gameChat
+ * options
+ *  
+ */ 
+
+
 var viii_isAttached;
 function viii_logAnsInChat() {
 	
@@ -85,9 +94,12 @@ function viii_attatch() {
 	if (viii_isAttached) viii_off();
 	viii_isAttached = true;
 	let [theWatched, onThe] = viii_getWatched();
-	theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat );
+	theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat);
 	
 	window.onkeyup = viii_parseKeys;
+
+	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
+	$("#menuBarOptionContainer")[0].onclick = function() { $("#settingModal").modal(); }; 
 }
 
 function viii_off() {
@@ -96,6 +108,7 @@ function viii_off() {
 	theWatched.off("DOMSubtreeModified");
 	
 	window.onkeyup = null;
+	$("#menuBarOptionContainer")[0].onclick = null
 }
 
 
