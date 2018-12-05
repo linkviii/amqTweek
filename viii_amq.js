@@ -20,7 +20,28 @@
 
  // probably is some way to find the logged in player's username...
 var viii_userName = "linkviii";
+
 var viii_isAttached;
+
+function viii_insertStyle() {
+	$("#viii-style").remove();
+	
+	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
+
+	let text = ["#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
+		"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
+		".gcUserName { color: springgreen; }",
+		".viii-yes { color: green; }",
+		".viii-no { color: red; }",
+	].join("\n");
+	
+	let style = document.createElement("style");
+	style.id = "viii-style";
+	style.textContent = text;
+
+	document.head.appendChild(style);
+
+}
 
 t00_nameFromAvatarElem = function( elem ) {
     return elem.id.substr(9);
@@ -41,23 +62,22 @@ function viii_isCorrect(username) {
 		if (name === username) {
 			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");
 			//const answer = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerText")[0].innerText;
-			return correct;
+			return  correct ? "viii-yes" : "viii-no";
 		}
 	}
-	console.error("Did not find username '" + username + "' in players list.");
-	return false;
+	
+	return "";
 }
 
 function viii_logAnsInChat() {
 	
 	// For local messages it seems AMQ just injects html.
 	// No reason not to do that I guess. 
-	let correct = viii_isCorrect(viii_userName);
-	let color = correct ? "green" : "red";
+	let correctClass = viii_isCorrect(viii_userName);
 
 	let count = $("#qpCurrentSongCount").text();
 	let total = $("#qpTotalSongCount").text();
-	let progress = '<span style="color:' + color + ';" >' + count + '</span> / ' + total;
+	let progress = '<span class="' + correctClass + '" >' + count + '</span> / ' + total;
 	let anime = $("#qpAnimeName").text();
 	
 	let type = $("#qpSongType").text();
@@ -133,15 +153,21 @@ function viii_attatch() {
 
 	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
 	$("#menuBarOptionContainer")[0].onclick = function() { $("#settingModal").modal(); }; 
+
+	//
+	viii_insertStyle();
 }
 
 function viii_off() {
 	viii_isAttached = false;
+
 	const theWatched = viii_getWatched()[0];
 	theWatched.off("DOMSubtreeModified");
 	
 	window.onkeyup = null;
-	$("#menuBarOptionContainer")[0].onclick = null
+	$("#menuBarOptionContainer")[0].onclick = null;
+
+	$("#viii-style").remove();
 }
 
 
