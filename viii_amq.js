@@ -3,6 +3,8 @@
 // Tested with firefox
 // AMQ uses jquery so might as well go all in with it?
 
+// Inspiration from https://github.com/LollipopFactory/AMQ-Data-Viewer/blob/master/tools/amq.js
+
 // Not sure if using tag id's or .$ references on global objects is 
 // more resilient to change. I'll find out when stuff breaks.
 // I just expect things to break. Its fine.
@@ -23,6 +25,21 @@ var viii_userName = "linkviii";
 
 var viii_isAttached;
 
+var viii_roundsPlayed;
+
+/** Wrap str with my span I can hide ? */
+function viii_tag(str){
+	return '<span class="viii-tag">' + str + '</span>';
+}
+
+function viii_systemMsg(a, b) {
+	a = viii_tag(a);
+	if (b !== '') b = viii_tag(b);
+
+	// TODO: just directly add to the list
+	gameChat.systemMessage(a, b);
+}
+
 function viii_insertStyle() {
 	$("#viii-style").remove();
 	
@@ -33,6 +50,7 @@ function viii_insertStyle() {
 		".gcUserName { color: springgreen; }",
 		".viii-yes { color: green; }",
 		".viii-no { color: red; }",
+		".viii-round { color: cyan }",
 	].join("\n");
 	
 	let style = document.createElement("style");
@@ -60,9 +78,30 @@ function viii_isCorrect(username) {
 	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
 		const name = playerNames[playerNum];
 		if (name === username) {
-			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");
-			//const answer = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerText")[0].innerText;
+			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");			
 			return  correct ? "viii-yes" : "viii-no";
+		}
+	}
+	
+	return "";
+}
+
+
+function viii_getScore(username) {
+	let avatarElems = document.getElementsByClassName("qpAvatarContainer");
+
+	let playerNum;
+	let playerNames = [];
+	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+		playerNames.push( t00_nameFromAvatarElem(avatarElems[playerNum]) );
+	}
+	
+	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+		const name = playerNames[playerNum];
+		if (name === username) {
+			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarPointText")[0]
+
+			return   correct.textContent;
 		}
 	}
 	
@@ -89,9 +128,20 @@ function viii_logAnsInChat() {
 	let a = progress + ": " + anime + " " + linkTag;
 	let b = type + ": " + song + " <b>[by]</b> " + artist;
 	
-	gameChat.systemMessage(a, b);
+	viii_systemMsg(a, b);
 	
-	// TODO check for last song and report score.
+	//  Check for last song and report score.
+	if (parseInt(count) == parseInt(total)) {
+		let score = viii_getScore("linkviii");
+		viii_roundsPlayed++;
+		let a = '<span class="viii-round">Round ' + viii_roundsPlayed + '</span>';
+		let b = score + ' / ' + count;
+		if ( parseInt(score) === 0) {
+			b = '';
+		}
+
+		viii_systemMsg(a, b);
+	}
 }
 
 /**
@@ -103,13 +153,15 @@ function viii_getWatched() {
 	return [$(id).parent(), changeSelector];
 }
 
-function viii_parseKeys(e) {
+viii_keymap = {'tab':9, 'enter':13, ',':188, '.':190, '/':191, 'b':66, 's':83, 'h':72,};
+
+function viii_parseKeysUp(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
-	
+
 	// Probably a better way to go about this but, it works.
-	let map = {'tab':9, 'enter':13, ',':188, '.':190, '/':191};
 	
-	if (key === map['tab']) {
+	
+	if (key === viii_keymap['tab']) {
 		const active = document.activeElement.id;
 		if (active === "qpAnswerInput" || quiz.$input[0].disabled) {
 			$("#gcInput")[0].click();
@@ -121,41 +173,83 @@ function viii_parseKeys(e) {
 	}
 
 	if (e.ctrlKey) {
-		//let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
-		//console.log(key + ": " + keyName);
+		let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
+		console.log(key + ": " + keyName);
+		
 
 		switch (key) {
-		case map['enter']:
+		case viii_keymap['enter']:
 			if (lobby.inLobby) {
 				lobby.fireMainButtonEvent();
 			} else {
 				skipController.toggle();				
 			}
 			break;
-		case map['/']:
+		case viii_keymap['/']:
 			quiz.$input.val('');
 			break;
-		case map[',']:
-			
-		break;
+		case viii_keymap[',']:
+			break;
+		case viii_keymap['b']:
+			e.preventDefault();
+			quiz.$input.val('BOKUMACHI');
+			break;
+		case viii_keymap['s']:
+			e.preventDefault();
+			console.log('s')
+			break;
+		case viii_keymap['h']:
+			$(".viii-tag").toggle();
+			break;
+
+		}
+	}
+}
+
+function viii_parseKeysDown(e) {
+	let key = e.keyCode ? e.keyCode : e.which;
+
+	if (e.ctrlKey) {		
+
+		switch (key) {
+		case viii_keymap['enter']:
+			e.preventDefault();
+			break;
+		case viii_keymap['/']:
+			e.preventDefault();
+			break;
+		case viii_keymap[',']:
+			break;
+		case viii_keymap['b']:
+			e.preventDefault();
+			break;
+		case viii_keymap['h']:
+			e.preventDefault();
+			break;
+
 
 		}
 	}
 }
 
 function viii_attatch() {
+	// Attempt to reset modifications before adding more.
 	if (viii_isAttached) viii_off();
+
 	viii_isAttached = true;
 	let [theWatched, onThe] = viii_getWatched();
 	theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat);
 	
-	window.onkeyup = viii_parseKeys;
+	window.onkeyup = viii_parseKeysUp;
+	window.onkeydown = viii_parseKeysDown;
 
 	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
 	$("#menuBarOptionContainer")[0].onclick = function() { $("#settingModal").modal(); }; 
 
 	//
 	viii_insertStyle();
+
+	if (viii_roundsPlayed === undefined) viii_roundsPlayed = -1;
 }
 
 function viii_off() {
@@ -165,6 +259,7 @@ function viii_off() {
 	theWatched.off("DOMSubtreeModified");
 	
 	window.onkeyup = null;
+	window.onkeydown = null;
 	$("#menuBarOptionContainer")[0].onclick = null;
 
 	$("#viii-style").remove();
