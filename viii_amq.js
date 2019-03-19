@@ -18,9 +18,9 @@
  * gameChat
  * options
  *  
- */ 
+ */
 
- // probably is some way to find the logged in player's username...
+// probably is some way to find the logged in player's username...
 var viii_userName = "linkviii";
 
 var viii_isAttached;
@@ -28,7 +28,7 @@ var viii_isAttached;
 var viii_roundsPlayed;
 
 /** Wrap str with my span I can hide ? */
-function viii_tag(str){
+function viii_tag(str) {
 	return '<span class="viii-tag">' + str + '</span>';
 }
 
@@ -42,17 +42,17 @@ function viii_systemMsg(a, b) {
 
 function viii_insertStyle() {
 	$("#viii-style").remove();
-	
+
 	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
 
 	let text = ["#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
-		"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
+	"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
 		".gcUserName { color: springgreen; }",
 		".viii-yes { color: green; }",
 		".viii-no { color: red; }",
 		".viii-round { color: cyan }",
 	].join("\n");
-	
+
 	let style = document.createElement("style");
 	style.id = "viii-style";
 	style.textContent = text;
@@ -61,8 +61,8 @@ function viii_insertStyle() {
 
 }
 
-t00_nameFromAvatarElem = function( elem ) {
-    return elem.id.substr(9);
+t00_nameFromAvatarElem = function (elem) {
+	return elem.id.substr(9);
 }
 
 // Probably better ways to do this but I guess it works...
@@ -71,18 +71,18 @@ function viii_isCorrect(username) {
 
 	let playerNum;
 	let playerNames = [];
-	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		playerNames.push( t00_nameFromAvatarElem(avatarElems[playerNum]) );
+	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+		playerNames.push(t00_nameFromAvatarElem(avatarElems[playerNum]));
 	}
-	
-	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+
+	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
 		const name = playerNames[playerNum];
 		if (name === username) {
-			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");			
-			return  correct ? "viii-yes" : "viii-no";
+			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");
+			return correct ? "viii-yes" : "viii-no";
 		}
 	}
-	
+
 	return "";
 }
 
@@ -92,24 +92,24 @@ function viii_getScore(username) {
 
 	let playerNum;
 	let playerNames = [];
-	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		playerNames.push( t00_nameFromAvatarElem(avatarElems[playerNum]) );
+	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+		playerNames.push(t00_nameFromAvatarElem(avatarElems[playerNum]));
 	}
-	
-	for(playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
+
+	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
 		const name = playerNames[playerNum];
 		if (name === username) {
 			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarPointText")[0]
 
-			return   correct.textContent;
+			return correct.textContent;
 		}
 	}
-	
+
 	return "";
 }
 
 function viii_logAnsInChat() {
-	
+
 	// For local messages it seems AMQ just injects html.
 	// No reason not to do that I guess. 
 	let correctClass = viii_isCorrect(viii_userName);
@@ -118,7 +118,7 @@ function viii_logAnsInChat() {
 	let total = $("#qpTotalSongCount").text();
 	let progress = '<span class="' + correctClass + '" >' + count + '</span> / ' + total;
 	let anime = $("#qpAnimeName").text();
-	
+
 	let type = $("#qpSongType").text();
 	let song = $("#qpSongName").text();
 	let artist = $("#qpSongArtist").text();
@@ -127,16 +127,16 @@ function viii_logAnsInChat() {
 
 	let a = progress + ": " + anime + " " + linkTag;
 	let b = type + ": " + song + " <b>[by]</b> " + artist;
-	
+
 	viii_systemMsg(a, b);
-	
+
 	//  Check for last song and report score.
 	if (parseInt(count) == parseInt(total)) {
 		let score = viii_getScore("linkviii");
 		viii_roundsPlayed++;
 		let a = '<span class="viii-round">Round ' + viii_roundsPlayed + '</span>';
 		let b = score + ' / ' + count;
-		if ( parseInt(score) === 0) {
+		if (parseInt(score) === 0) {
 			b = '';
 		}
 
@@ -153,14 +153,19 @@ function viii_getWatched() {
 	return [$(id).parent(), changeSelector];
 }
 
-viii_keymap = {'tab':9, 'enter':13, ',':188, '.':190, '/':191, 'b':66, 's':83, 'h':72,};
+viii_keymap = {
+	'tab': 9, 'enter': 13,
+	',': 188, '.': 190, '/': 191,
+	'b': 66, 's': 83, 'h': 72,
+	'up': 38, 'down': 40, 'left': 37, 'right': 39
+};
 
 function viii_parseKeysUp(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
 
 	// Probably a better way to go about this but, it works.
-	
-	
+
+
 	if (key === viii_keymap['tab']) {
 		const active = document.activeElement.id;
 		if (active === "qpAnswerInput" || quiz.$input[0].disabled) {
@@ -175,32 +180,31 @@ function viii_parseKeysUp(e) {
 	if (e.ctrlKey) {
 		let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
 		console.log(key + ": " + keyName);
-		
+
 
 		switch (key) {
-		case viii_keymap['enter']:
-			if (lobby.inLobby) {
-				lobby.fireMainButtonEvent();
-			} else {
-				skipController.toggle();				
-			}
-			break;
-		case viii_keymap['/']:
-			quiz.$input.val('');
-			break;
-		case viii_keymap[',']:
-			break;
-		case viii_keymap['b']:
-			e.preventDefault();
-			quiz.$input.val('BOKUMACHI');
-			break;
-		case viii_keymap['s']:
-			e.preventDefault();
-			console.log('s')
-			break;
-		case viii_keymap['h']:
-			$(".viii-tag").toggle();
-			break;
+			case viii_keymap['enter']:
+				if (lobby.inLobby) {
+					lobby.fireMainButtonEvent();
+				} else {
+					skipController.toggle();
+				}
+				break;
+			case viii_keymap['/']:
+				quiz.$input.val('');
+				break;
+			case viii_keymap[',']:
+				break;
+			case viii_keymap['b']:
+				e.preventDefault();
+				quiz.$input.val('BOKUMACHI');
+				break;
+			case viii_keymap['s']:
+				e.preventDefault();
+				break;
+			case viii_keymap['h']:
+				$("#gcMessageContainer > li:has(.viii-tag)").toggle();
+				break;
 
 		}
 	}
@@ -209,23 +213,16 @@ function viii_parseKeysUp(e) {
 function viii_parseKeysDown(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
 
-	if (e.ctrlKey) {		
+	if (e.ctrlKey) {
 
 		switch (key) {
-		case viii_keymap['enter']:
-			e.preventDefault();
-			break;
-		case viii_keymap['/']:
-			e.preventDefault();
-			break;
-		case viii_keymap[',']:
-			break;
-		case viii_keymap['b']:
-			e.preventDefault();
-			break;
-		case viii_keymap['h']:
-			e.preventDefault();
-			break;
+			case viii_keymap['enter']:
+			case viii_keymap['/']:
+			case viii_keymap[',']:
+			case viii_keymap['b']:
+			case viii_keymap['h']:
+				e.preventDefault();
+				break;
 
 
 		}
@@ -239,12 +236,12 @@ function viii_attatch() {
 	viii_isAttached = true;
 	let [theWatched, onThe] = viii_getWatched();
 	theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat);
-	
+
 	window.onkeyup = viii_parseKeysUp;
 	window.onkeydown = viii_parseKeysDown;
 
 	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
-	$("#menuBarOptionContainer")[0].onclick = function() { $("#settingModal").modal(); }; 
+	$("#menuBarOptionContainer")[0].onclick = function () { $("#settingModal").modal(); };
 
 	//
 	viii_insertStyle();
@@ -257,7 +254,7 @@ function viii_off() {
 
 	const theWatched = viii_getWatched()[0];
 	theWatched.off("DOMSubtreeModified");
-	
+
 	window.onkeyup = null;
 	window.onkeydown = null;
 	$("#menuBarOptionContainer")[0].onclick = null;
