@@ -27,6 +27,10 @@ var viii_isAttached;
 
 var viii_roundsPlayed;
 
+// Enable level 2 enhancments which may be frowned on
+// mutation observer, $input
+var viii_lvl2 = false;
+
 /** Wrap str with my span I can hide ? */
 function viii_tag(str) {
 	return '<span class="viii-tag">' + str + '</span>';
@@ -65,6 +69,11 @@ t00_nameFromAvatarElem = function (elem) {
 	return elem.id.substr(9);
 }
 
+function viii_nameFromAvatarElm(elm) {
+	qqq = elm.getElementsByClassName("qpAvatarNameContainer")[0];
+	return qqq.children[0].innerText;
+}
+
 // Probably better ways to do this but I guess it works...
 function viii_isCorrect(username) {
 	let avatarElems = document.getElementsByClassName("qpAvatarContainer");
@@ -72,7 +81,7 @@ function viii_isCorrect(username) {
 	let playerNum;
 	let playerNames = [];
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		playerNames.push(t00_nameFromAvatarElem(avatarElems[playerNum]));
+		playerNames.push(viii_nameFromAvatarElm(avatarElems[playerNum]));
 	}
 
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
@@ -87,13 +96,16 @@ function viii_isCorrect(username) {
 }
 
 
+
+
+
 function viii_getScore(username) {
 	let avatarElems = document.getElementsByClassName("qpAvatarContainer");
 
 	let playerNum;
 	let playerNames = [];
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		playerNames.push(t00_nameFromAvatarElem(avatarElems[playerNum]));
+		playerNames.push(viii_nameFromAvatarElm(avatarElems[playerNum]));
 	}
 
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
@@ -166,20 +178,20 @@ function viii_parseKeysUp(e) {
 	// Probably a better way to go about this but, it works.
 
 
-	if (key === viii_keymap['tab']) {
+	if (viii_lvl2) if (key === viii_keymap['tab']) {
 		const active = document.activeElement.id;
-		if (active === "qpAnswerInput" || quiz.$input[0].disabled) {
+		if (active === "qpAnswerInput" || $("#qpAnswerInput")[0].disabled) {
 			$("#gcInput")[0].click();
 			$("#gcInput").focus();
 		} else {
-			quiz.$input[0].click();
-			quiz.$input.focus();
+			$("#qpAnswerInput")[0].click();
+			$("#qpAnswerInput").focus();
 		}
 	}
 
 	if (e.ctrlKey) {
 		let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
-		console.log(key + ": " + keyName);
+		// console.log(key + ": " + keyName);
 
 
 		switch (key) {
@@ -187,17 +199,17 @@ function viii_parseKeysUp(e) {
 				if (lobby.inLobby) {
 					lobby.fireMainButtonEvent();
 				} else {
-					skipController.toggle();
+					quiz.skipClicked()
 				}
 				break;
 			case viii_keymap['/']:
-				quiz.$input.val('');
+			if (viii_lvl2) $("#qpAnswerInput").val('');
 				break;
 			case viii_keymap[',']:
 				break;
 			case viii_keymap['b']:
 				e.preventDefault();
-				quiz.$input.val('BOKUMACHI');
+				if (viii_lvl2) $("#qpAnswerInput").val('BOKUMACHI');
 				break;
 			case viii_keymap['s']:
 				e.preventDefault();
@@ -235,7 +247,7 @@ function viii_attatch() {
 
 	viii_isAttached = true;
 	let [theWatched, onThe] = viii_getWatched();
-	theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat);
+	if (viii_lvl2) theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat);
 
 	window.onkeyup = viii_parseKeysUp;
 	window.onkeydown = viii_parseKeysDown;
