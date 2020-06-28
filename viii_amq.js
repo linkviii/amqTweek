@@ -47,8 +47,7 @@ function viii_systemMsg(a, b) {
 function viii_insertStyle() {
 	$("#viii-style").remove();
 
-	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
-
+	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/mainline/backgrounds/adwaita-night.jpg )";
 	let text = ["#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
 	"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
 		".gcUserName { color: springgreen; }",
@@ -94,9 +93,6 @@ function viii_isCorrect(username) {
 
 	return "";
 }
-
-
-
 
 
 function viii_getScore(username) {
@@ -168,9 +164,11 @@ function viii_getWatched() {
 viii_keymap = {
 	'tab': 9, 'enter': 13,
 	',': 188, '.': 190, '/': 191,
-	'b': 66, 's': 83, 'h': 72,
+	'b': 66, 's': 83, 'h': 72, 'm': 77,
 	'up': 38, 'down': 40, 'left': 37, 'right': 39
 };
+
+var viii_debug_input = false;
 
 function viii_parseKeysUp(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
@@ -191,7 +189,9 @@ function viii_parseKeysUp(e) {
 
 	if (e.ctrlKey) {
 		let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
-		// console.log(key + ": " + keyName);
+		if (viii_debug_input) { 
+			console.log(key + ": " + keyName);
+		}
 
 
 		switch (key) {
@@ -203,9 +203,11 @@ function viii_parseKeysUp(e) {
 				}
 				break;
 			case viii_keymap['/']:
-			if (viii_lvl2) $("#qpAnswerInput").val('');
+				if (viii_lvl2) $("#qpAnswerInput").val('');
 				break;
 			case viii_keymap[',']:
+				$('#qpVolumeIcon')[0].click()
+				e.preventDefault();
 				break;
 			case viii_keymap['b']:
 				e.preventDefault();
@@ -217,6 +219,12 @@ function viii_parseKeysUp(e) {
 			case viii_keymap['h']:
 				$("#gcMessageContainer > li:has(.viii-tag)").toggle();
 				break;
+			case viii_keymap['m']:
+				e.preventDefault();
+				$('#qpVolumeIcon')[0].click()
+				break;
+				
+				
 
 		}
 	}
@@ -233,6 +241,8 @@ function viii_parseKeysDown(e) {
 			case viii_keymap[',']:
 			case viii_keymap['b']:
 			case viii_keymap['h']:
+			case viii_keymap['s']:
+			case viii_keymap['m']:
 				e.preventDefault();
 				break;
 
@@ -274,6 +284,10 @@ function viii_off() {
 	$("#viii-style").remove();
 }
 
+function viii_go2(){
+	viii_lvl2 = true;
+	viii_attatch();
+}
 
 
 viii_attatch();
