@@ -31,6 +31,10 @@ var viii_roundsPlayed;
 // mutation observer, $input
 var viii_lvl2 = false;
 
+var viii_record = false;
+
+var viii_song_list = [];
+
 /** Wrap str with my span I can hide ? */
 function viii_tag(str) {
 	return '<span class="viii-tag">' + str + '</span>';
@@ -47,7 +51,9 @@ function viii_systemMsg(a, b) {
 function viii_insertStyle() {
 	$("#viii-style").remove();
 
-	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/mainline/backgrounds/adwaita-night.jpg )";
+	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/mainline/backgrounds/adwaita-night.jpg )";
+	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
+	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.png )";
 	let text = ["#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
 	"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
 		".gcUserName { color: springgreen; }",
@@ -138,6 +144,17 @@ function viii_logAnsInChat() {
 
 	viii_systemMsg(a, b);
 
+	if (viii_record) {
+		let obj = {
+			type: type,
+			song: song,
+			artist: artist,
+			linkSrc: linkSrc,
+			anime: anime
+		};
+		viii_song_list.push(obj);
+	}
+
 	//  Check for last song and report score.
 	if (parseInt(count) == parseInt(total)) {
 		let score = viii_getScore("linkviii");
@@ -163,8 +180,8 @@ function viii_getWatched() {
 
 viii_keymap = {
 	'tab': 9, 'enter': 13,
-	',': 188, '.': 190, '/': 191,
-	'b': 66, 's': 83, 'h': 72, 'm': 77,
+	',': 188, '.': 190, '/': 191, "'": 222,
+	'a': 65, 'b': 66, 's': 83, 'h': 72, 'm': 77, 'f': 70, 'd': 68,
 	'up': 38, 'down': 40, 'left': 37, 'right': 39
 };
 
@@ -172,6 +189,23 @@ var viii_debug_input = false;
 
 function viii_parseKeysUp(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
+
+	let target = $(e.target);
+	let focusedTag = $(document.activeElement).get(0).tagName.toLowerCase();
+	let inputFocused = focusedTag === "textarea" || focusedTag === "input";
+
+	// Ignore quick search
+	if (!inputFocused) {
+		switch (key) {
+			case viii_keymap["."]:
+			case viii_keymap["/"]:
+			case viii_keymap["'"]:
+			case viii_keymap['a']:
+				e.preventDefault();
+
+		}
+		return;
+	}
 
 	// Probably a better way to go about this but, it works.
 
@@ -189,13 +223,14 @@ function viii_parseKeysUp(e) {
 
 	if (e.ctrlKey) {
 		let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
-		if (viii_debug_input) { 
+		if (viii_debug_input) {
 			console.log(key + ": " + keyName);
 		}
 
 
 		switch (key) {
 			case viii_keymap['enter']:
+				console.log(e)
 				if (lobby.inLobby) {
 					lobby.fireMainButtonEvent();
 				} else {
@@ -223,8 +258,13 @@ function viii_parseKeysUp(e) {
 				e.preventDefault();
 				$('#qpVolumeIcon')[0].click()
 				break;
-				
-				
+
+			case viii_keymap['d']:
+			case viii_keymap['f']:
+				e.preventDefault();
+				break;
+
+
 
 		}
 	}
@@ -233,16 +273,36 @@ function viii_parseKeysUp(e) {
 function viii_parseKeysDown(e) {
 	let key = e.keyCode ? e.keyCode : e.which;
 
+	let target = $(e.target);
+	let focusedTag = $(document.activeElement).get(0).tagName.toLowerCase();
+	let inputFocused = focusedTag === "textarea" || focusedTag === "input";
+
+	// Ignore quick search
+	if (!inputFocused) {
+		switch (key) {
+			case viii_keymap["."]:
+			case viii_keymap["/"]:
+			case viii_keymap["'"]:
+			case viii_keymap['a']:
+				e.preventDefault();
+
+		}
+		return;
+	}
+
 	if (e.ctrlKey) {
 
 		switch (key) {
-			case viii_keymap['enter']:
+			//case viii_keymap['enter']:
+			case viii_keymap['d']:
 			case viii_keymap['/']:
 			case viii_keymap[',']:
 			case viii_keymap['b']:
 			case viii_keymap['h']:
 			case viii_keymap['s']:
 			case viii_keymap['m']:
+			case viii_keymap['f']:
+
 				e.preventDefault();
 				break;
 
@@ -284,7 +344,7 @@ function viii_off() {
 	$("#viii-style").remove();
 }
 
-function viii_go2(){
+function viii_go2() {
 	viii_lvl2 = true;
 	viii_attatch();
 }
