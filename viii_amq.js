@@ -54,12 +54,47 @@ function viii_insertStyle() {
 	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/mainline/backgrounds/adwaita-night.jpg )";
 	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
 	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.png )";
-	let text = ["#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
-	"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
+
+	const stupidface = "url( https://i.imgur.com/YkF6ke3.png )";
+
+	const amqGrey = "#424242";
+
+	let text = [
+		// game page background
+		"#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
+		"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
+		// Chat colors
 		".gcUserName { color: springgreen; }",
 		".viii-yes { color: green; }",
 		".viii-no { color: red; }",
 		".viii-round { color: cyan }",
+		// Box backgrounds
+		".floatingContainer { background-color: transparent; box-shadow: none; }",
+		// Countdown / hide answer box
+		".qpVideoOverlay  { background-image: " + stupidface + "; background-size: cover;}",
+		// Countdown text
+		"#qpHiderText { display: inline; border-radius: 20px; padding: 5px; background-color: rgba(0, 0, 0, 0.48); } ",
+		// Song name+artist cover. Transparent color text to hide the "?"
+		"#qpInfoHider { background-image: " + stupidface + "; background-size: contain; color: transparent; }",
+		// Box above the video
+		"#qpAnimeNameHider  { background-image: " + stupidface + "; background-size: cover; color: transparent; }",
+		// 👍👎
+		".qpSingleRateContainer { background: transparent; border: azure 2px solid; }",
+		// Restore background for avatar's answer
+		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
+		// Make the user score box not overlap with the answer
+		".qpAvatarStatusOuterContainer { position: unset; transform: unset; width: unset; background-color: unset; display: inline; overflow: unset; }",
+		".qpAvatarStatusInnerContainer { position: unset; transform: unset; width: unset; background-color: unset; display: inline; }",
+		".qpAvatarStatusBar            { position: unset; transform: unset; width: unset; background-color: unset; display: inline; }",
+		".qpAvatarStatus  { "
+		+ "position: unset; transform: translateX(10px) translateY(35px); "
+		+ "width: 18px; border-radius: 20px; "
+		+ "text-align: center; "
+		// Negative margin allows floats to overlap
+		+ "margin-left: -20px; float: right; "
+		+ "background-color: " + amqGrey + "; color: #09baffdb;"
+		+ " }",
+
 	].join("\n");
 
 	let style = document.createElement("style");
@@ -75,8 +110,9 @@ t00_nameFromAvatarElem = function (elem) {
 }
 
 function viii_nameFromAvatarElm(elm) {
-	qqq = elm.getElementsByClassName("qpAvatarNameContainer")[0];
-	return qqq.children[0].innerText;
+
+	let name = elm.getElementsByClassName("qpAvatarName")[0];
+	return name.innerText;
 }
 
 // Probably better ways to do this but I guess it works...
@@ -92,7 +128,7 @@ function viii_isCorrect(username) {
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
 		const name = playerNames[playerNum];
 		if (name === username) {
-			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerContainer")[0].classList.contains("rightAnswer");
+			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarAnswerText")[0].classList.contains("rightAnswer");
 			return correct ? "viii-yes" : "viii-no";
 		}
 	}
