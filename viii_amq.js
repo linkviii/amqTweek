@@ -83,19 +83,26 @@ function viii_insertStyle() {
 		// Restore background for avatar's answer
 		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
 		// Make the user score box not overlap with the answer
-		".qpAvatarStatusOuterContainer { position: unset; transform: unset; width: unset; background-color: unset; display: inline; overflow: unset; }",
-		".qpAvatarStatusInnerContainer { position: unset; transform: unset; width: unset; background-color: unset; display: inline; }",
-		".qpAvatarStatusBar            { position: unset; transform: unset; width: unset; background-color: unset; display: inline; }",
-		".qpAvatarStatus  { "
-		+ "position: unset; transform: translateX(10px) translateY(35px); "
-		+ "width: 18px; border-radius: 20px; "
+		".qpAvatarStatusOuterContainer { position: unset; transform: unset; width: unset; ; display: inline; overflow: unset; }",
+		".qpAvatarStatusInnerContainer { position: unset; transform: unset; width: unset; ; display: inline; }",
+		//
+		".qpAvatarStatus, .qpAvatarStatusBar { "
+		+ "position: unset; "
 		+ "text-align: center; "
 		// Negative margin allows floats to overlap
-		+ "margin-left: -20px; float: right; "
-		+ "background-color: " + amqGrey + "; color: #09baffdb;"
+		+ "margin-left: -100px; float: right; "
+		+ "width: unset; height: unset; border-radius: 20px; "
 		+ " }",
-
+		// Make text box sit inside the status box. 
+		".qpAvatarStatusBar {transform: translateX(10px) translateY(35px); min-width: 31px; min-height: 31px; opacity: unset; }",
+		".qpAvatarStatus    {transform: translateX(12px) translateY(37px); min-width: 26px; min-height: 26px; background-color: #2e51a2; }",
+		// Default is blue against blue.
+		".qpAvatarStatusBar.completed, .qpAvatarStatusBar.looted { background-color: white; }",
+		// bd7efd Default appears purpleish but is actually just sort of transparent white on blue
+		".qpAvatarStatusBar.planning {background-color: #b873ff; }",
+		
 	].join("\n");
+	// + "background-color: " + amqGrey + "; color: #09baffdb;"
 
 	let style = document.createElement("style");
 	style.id = "viii-style";
