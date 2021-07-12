@@ -1,4 +1,4 @@
-
+//TODO     
 // Paste into brower console
 // Tested with firefox
 // AMQ uses jquery so might as well go all in with it?
@@ -81,10 +81,17 @@ function viii_insertStyle() {
 		// 👍👎
 		".qpSingleRateContainer { background: transparent; border: azure 2px solid; }",
 		// Restore background for avatar's answer
-		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
+		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",  
+		".lobbyAvatarTeamSelector {background-color: " + amqGrey + "; }", 
+		".popoutMessage {background-color: " + amqGrey + "; }",
+		".playerProfileContainer {background-color: " + amqGrey + "; }", 		
+		//
+		
 		// Make the user score box not overlap with the answer
 		".qpAvatarStatusOuterContainer { position: unset; transform: unset; width: unset; ; display: inline; overflow: unset; }",
 		".qpAvatarStatusInnerContainer { position: unset; transform: unset; width: unset; ; display: inline; }",
+		// Make the glow more noticable
+		".lbReady .lobbyAvatarImgContainer { box-shadow: 0px 0px 10px 2px rgb(134, 204, 255); }",
 		//
 		".qpAvatarStatus, .qpAvatarStatusBar { "
 		+ "position: unset; "
