@@ -3,7 +3,7 @@
 // Tested with firefox
 // AMQ uses jquery so might as well go all in with it?
 
-// Inspiration from https://github.com/LollipopFactory/AMQ-Data-Viewer/blob/master/tools/amq.js
+
 
 // Not sure if using tag id's or .$ references on global objects is 
 // more resilient to change. I'll find out when stuff breaks.
@@ -53,7 +53,8 @@ function viii_insertStyle() {
 
 	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/mainline/backgrounds/adwaita-night.jpg )";
 	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
-	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.png )";
+	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.png )";
+	const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/main/backgrounds/adwaita-d.jpg )";
 
 	const stupidface = "url( https://i.imgur.com/YkF6ke3.png )";
 
