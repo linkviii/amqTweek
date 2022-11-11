@@ -1,3 +1,6 @@
 #
 hidden/
+.vscode
+*
+!viii_amq.js
 #

@@ -35,9 +35,12 @@ var viii_record = false;
 
 var viii_song_list = [];
 
+var viii_hideChatThings = false;
+
 /** Wrap str with my span I can hide ? */
 function viii_tag(str) {
-	return '<span class="viii-tag">' + str + '</span>';
+	const hideMe = '';
+	return `<span class="viii-tag" ${hideMe}>${str}</span>`;
 }
 
 function viii_systemMsg(a, b) {
@@ -46,6 +49,9 @@ function viii_systemMsg(a, b) {
 
 	// TODO: just directly add to the list
 	gameChat.systemMessage(a, b);
+	if (viii_hideChatThings) {
+		$("#gcMessageContainer > li:has(.viii-tag):last-of-type").hide();
+	}
 }
 
 function viii_insertStyle() {
@@ -84,12 +90,12 @@ function viii_insertStyle() {
 		// 👍👎
 		".qpSingleRateContainer { background: transparent; border: azure 2px solid; }",
 		// Restore background for avatar's answer
-		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",  
-		".lobbyAvatarTeamSelector {background-color: " + amqGrey + "; }", 
+		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
+		".lobbyAvatarTeamSelector {background-color: " + amqGrey + "; }",
 		".popoutMessage {background-color: " + amqGrey + "; }",
-		".playerProfileContainer {background-color: " + amqGrey + "; }", 		
+		".playerProfileContainer {background-color: " + amqGrey + "; }",
 		//
-		
+
 		// Make the user score box not overlap with the answer
 		".qpAvatarStatusOuterContainer { position: unset; transform: unset; width: unset; ; display: inline; overflow: unset; }",
 		".qpAvatarStatusInnerContainer { position: unset; transform: unset; width: unset; ; display: inline; }",
@@ -111,7 +117,7 @@ function viii_insertStyle() {
 		".qpAvatarStatusBar.completed, .qpAvatarStatusBar.looted { background-color: white; }",
 		// bd7efd Default appears purpleish but is actually just sort of transparent white on blue
 		".qpAvatarStatusBar.planning {background-color: #b873ff; }",
-		
+
 	].join("\n");
 	// + "background-color: " + amqGrey + "; color: #09baffdb;"
 
@@ -155,23 +161,21 @@ function viii_isCorrect(username) {
 }
 
 
-function viii_getScore(username) {
-	let avatarElems = document.getElementsByClassName("qpAvatarContainer");
+function viii_getScore() {
 
-	let playerNum;
-	let playerNames = [];
-	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		playerNames.push(viii_nameFromAvatarElm(avatarElems[playerNum]));
+	// Guess this would work too?
+	// $(".qpScoreBoardEntry").find(".qpsPlayerName.self ").
+	const table = $(".qpScoreBoardEntry")
+	for (let data of table) {
+		const username = data.querySelector(".qpsPlayerName ").textContent;
+		if (username !== viii_userName)
+			continue;
+		const score = data.querySelector(".qpsPlayerScore").textContent;
+		return score;
 	}
 
-	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		const name = playerNames[playerNum];
-		if (name === username) {
-			const correct = avatarElems[playerNum].getElementsByClassName("qpAvatarPointText")[0]
 
-			return correct.textContent;
-		}
-	}
+	//----
 
 	return "";
 }
@@ -211,7 +215,7 @@ function viii_logAnsInChat() {
 
 	//  Check for last song and report score.
 	if (parseInt(count) == parseInt(total)) {
-		let score = viii_getScore("linkviii");
+		let score = viii_getScore();
 		viii_roundsPlayed++;
 		let a = '<span class="viii-round">Round ' + viii_roundsPlayed + '</span>';
 		let b = score + ' / ' + count;
@@ -258,7 +262,7 @@ function viii_parseKeysUp(e) {
 				e.preventDefault();
 
 		}
-		return;
+		// return;
 	}
 
 	// Probably a better way to go about this but, it works.
@@ -294,23 +298,22 @@ function viii_parseKeysUp(e) {
 			case viii_keymap['/']:
 				if (viii_lvl2) $("#qpAnswerInput").val('');
 				break;
+			case viii_keymap['m']:
 			case viii_keymap[',']:
 				$('#qpVolumeIcon')[0].click()
 				e.preventDefault();
 				break;
 			case viii_keymap['b']:
 				e.preventDefault();
-				if (viii_lvl2) $("#qpAnswerInput").val('BOKUMACHI');
+
 				break;
 			case viii_keymap['s']:
 				e.preventDefault();
 				break;
 			case viii_keymap['h']:
-				$("#gcMessageContainer > li:has(.viii-tag)").toggle();
-				break;
-			case viii_keymap['m']:
-				e.preventDefault();
-				$('#qpVolumeIcon')[0].click()
+				// toggle(true) → .show()
+				$("#gcMessageContainer > li:has(.viii-tag)").toggle(viii_hideChatThings);
+				viii_hideChatThings = !viii_hideChatThings;
 				break;
 
 			case viii_keymap['d']:
@@ -336,6 +339,7 @@ function viii_parseKeysDown(e) {
 		switch (key) {
 			case viii_keymap["."]:
 			case viii_keymap["/"]:
+			case viii_keymap['h']:
 			case viii_keymap["'"]:
 			case viii_keymap['a']:
 				e.preventDefault();
@@ -403,5 +407,21 @@ function viii_go2() {
 	viii_attatch();
 }
 
+function viii_bannerBuy() {
+	avatarList = document.getElementById("swContentAvatarContainer").querySelectorAll(".swAvatarTile")
+	for (let avatar of avatarList) {
+		let banner = avatar.querySelector(".swAvatarTileFooter")
 
-viii_attatch();
+		banner.onclick = () => {
+			// Focus this avatar
+			banner.parentElement.click()
+			// Click "Unlock" on the right
+			document.getElementById("swRightColumnActionButtonText").click()
+			// XXX Actually click buy
+			document.getElementById("swPriceBuyButton").click()
+		}
+	}
+}
+
+// viii_attatch();
+viii_go2();
