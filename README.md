@@ -1,3 +1,5 @@
+Out of date readme lol
+
 # amqTweek
 My tweeks for Anime Music Quiz
 
@@ -9,6 +11,6 @@ My tweeks for Anime Music Quiz
 
 Does not select first thing in the dropdown :( `shift + enter` in the future? 
 
-Tested with firefox. Expect this readme to be out of date.
+Tested with firefox. **Expect this readme to be out of date.**
 
-For other fun see https://github.com/LollipopFactory/AMQ-Data-Viewer/blob/master/tools/amq.js
+
