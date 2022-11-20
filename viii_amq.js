@@ -117,6 +117,33 @@ function viii_insertStyle() {
 		".qpAvatarStatusBar.completed, .qpAvatarStatusBar.looted { background-color: white; }",
 		// bd7efd Default appears purpleish but is actually just sort of transparent white on blue
 		".qpAvatarStatusBar.planning {background-color: #b873ff; }",
+		//
+		// Make the skip song button always to the left of the answer box
+		`#qpSkipContainer.highlight #qpVoteSkip,
+		#qpSkipContainer:hover #qpVoteSkip,
+		#qpSkipContainer.votePreview #qpVoteSkip,
+		#qpSkipContainer.preDisable #qpVoteSkip,
+		#qpVoteSkip,
+		#qpVoteState,
+		#qpSkipContainer:hover,
+		#qpSkipContainer:hover #qpVoteState,
+		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
+		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
+			transform: unset;
+			transition: unset;
+		}
+		
+		#qpSkipContainer {
+			overflow: visible;
+			transform: unset;
+			left: -114px;
+			width: 114px;
+		}
+		
+		#qpVoteStateContainer {
+			overflow: visible;
+		}`,
+		//
 
 	].join("\n");
 	// + "background-color: " + amqGrey + "; color: #09baffdb;"
@@ -126,6 +153,10 @@ function viii_insertStyle() {
 	style.textContent = text;
 
 	document.head.appendChild(style);
+
+	// Remove slant style
+	$("#qpVoteSkip").removeClass("leftRightButtonTop");
+	$("#qpVoteState").on("click", () => quiz.skipClicked());
 
 }
 
