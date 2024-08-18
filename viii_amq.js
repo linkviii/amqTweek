@@ -78,7 +78,8 @@ function viii_insertStyle() {
 		".viii-no { color: red; }",
 		".viii-round { color: cyan }",
 		// Box backgrounds
-		".floatingContainer { background-color: transparent; box-shadow: none; }",
+		".qpAvatarImageContainer.floatingContainer { background: transparent; }",
+		//".floatingContainer { background-color: transparent; box-shadow: none; }",
 		// Countdown / hide answer box
 		".qpVideoOverlay  { background-image: " + stupidface + "; background-size: cover;}",
 		// Countdown text
@@ -90,10 +91,10 @@ function viii_insertStyle() {
 		// 👍👎
 		".qpSingleRateContainer { background: transparent; border: azure 2px solid; }",
 		// Restore background for avatar's answer
-		".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
-		".lobbyAvatarTeamSelector {background-color: " + amqGrey + "; }",
-		".popoutMessage {background-color: " + amqGrey + "; }",
-		".playerProfileContainer {background-color: " + amqGrey + "; }",
+		//".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
+		//".lobbyAvatarTeamSelector {background-color: " + amqGrey + "; }",
+		//".popoutMessage {background-color: " + amqGrey + "; }",
+		//".playerProfileContainer {background-color: " + amqGrey + "; }",
 		//
 
 		// Make the user score box not overlap with the answer
@@ -110,39 +111,42 @@ function viii_insertStyle() {
 		+ "margin-left: -100px; float: right; "
 		+ "width: unset; height: unset; border-radius: 20px; "
 		+ " }",
+		//
+		".awesomplete {font-family: monospace;}",
 		// Make text box sit inside the status box. 
-		".qpAvatarStatusBar {transform: translateX(10px) translateY(35px); min-width: 31px; min-height: 31px; opacity: unset; }",
-		".qpAvatarStatus    {transform: translateX(12px) translateY(37px); min-width: 26px; min-height: 26px; background-color: #2e51a2; }",
+		".qpAvatarAnswerContainer {top: -29px;} ",
+		".qpAvatarStatusBar {transform: translateX(10px) translateY(-32px); min-width: 31px; min-height: 31px; opacity: unset; }",
+		".qpAvatarStatus    {transform: translateX(12px) translateY(-30px); min-width: 26px; min-height: 26px; background-color: #2e51a2; }",
 		// Default is blue against blue.
 		".qpAvatarStatusBar.completed, .qpAvatarStatusBar.looted { background-color: white; }",
 		// bd7efd Default appears purpleish but is actually just sort of transparent white on blue
 		".qpAvatarStatusBar.planning {background-color: #b873ff; }",
 		//
 		// Make the skip song button always to the left of the answer box
-		`#qpSkipContainer.highlight #qpVoteSkip,
-		#qpSkipContainer:hover #qpVoteSkip,
-		#qpSkipContainer.votePreview #qpVoteSkip,
-		#qpSkipContainer.preDisable #qpVoteSkip,
-		#qpVoteSkip,
-		#qpVoteState,
-		#qpSkipContainer:hover,
-		#qpSkipContainer:hover #qpVoteState,
-		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
-		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
-			transform: unset;
-			transition: unset;
-		}
-		
-		#qpSkipContainer {
-			overflow: visible;
-			transform: unset;
-			left: -114px;
-			width: 114px;
-		}
-		
-		#qpVoteStateContainer {
-			overflow: visible;
-		}`,
+//		`#qpSkipContainer.highlight #qpVoteSkip,
+//		#qpSkipContainer:hover #qpVoteSkip,
+//		#qpSkipContainer.votePreview #qpVoteSkip,
+//		#qpSkipContainer.preDisable #qpVoteSkip,
+//		#qpVoteSkip,
+//		#qpVoteState,
+//		#qpSkipContainer:hover,
+//		#qpSkipContainer:hover #qpVoteState,
+//		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
+//		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
+//			transform: unset;
+//			transition: unset;
+//		}
+//		
+//		#qpSkipContainer {
+//			overflow: visible;
+//			transform: unset;
+//			left: -114px;
+//			width: 114px;
+//		}
+//		
+//		#qpVoteStateContainer {
+//			overflow: visible;
+//		}`,
 		//
 
 	].join("\n");
@@ -155,8 +159,8 @@ function viii_insertStyle() {
 	document.head.appendChild(style);
 
 	// Remove slant style
-	$("#qpVoteSkip").removeClass("leftRightButtonTop");
-	$("#qpVoteState").on("click", () => quiz.skipClicked());
+	//$("#qpVoteSkip").removeClass("leftRightButtonTop");
+	//$("#qpVoteState").on("click", () => quiz.skipClicked());
 
 }
 
