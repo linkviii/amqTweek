@@ -1,4 +1,154 @@
-declare function $(_:any): JQuery;
+declare function $(_: any): JQuery;
+
+/* AMQ globals: */
+
+/** Name of logged in user. */
+var selfName: string;
+
+/** Instance of GameChat */
+var gameChat: GameChat;
+
+/** @type {} */
+var lobby: Lobby;
+
+/** @type {} */
+var quiz: Quiz;
+
+declare class GameChat {
+    // $CHAT_TEXTAREA_CONTAINER: r;
+    // $PLAYER_ONLY_MESSAGE: r;
+    // $QUEUE_BUTTON: r;
+    // $QUEUE_COUNT: r;
+    // $QUEUE_JOIN_BUTTON_TEXT: r;
+    // $QUEUE_LIST: r;
+    // $QUEUE_LIST_BUTTON: r;
+    // $QUEUE_TAB: r;
+    // $SCROLLABLE_CONTAINERS: r;
+    // $SPECTATE_BUTTON: r;
+    // $SPECTATE_HOST_ICON: r;
+    // $chatInputField: r;
+    // $chatMessageContainer: r;
+    // $chatView: r;
+    // $contentContainer: r;
+    // $cooldownBar: r;
+    // $cooldownBarContainer: r;
+    // $gameChatButton: r;
+    // $spectateListButton: r;
+    // $spectatorCounter: r;
+    // $spectatorList: r;
+    // $spectatorView: r;
+    // $teamChatSwitchContainer: r;
+    // $view: r;
+    CHAT_COOLDOWN_LENGTH: number;
+    COOLDOWN_POPOVER_DISPLAY_TIME: number;
+    MAX_CHAT_MESSAGES: number;
+    MAX_MESSAGE_LENGTH: number;
+    MINIMUM_LEVEL_TO_CHAT_IN_ANNI_ROOM: number;
+    MINIMUM_LEVEL_TO_CHAT_IN_SLOW_MODE: number;
+    MOD_BAN_MESSAGE_COMMAND_REGEX: RegExp;
+    MOD_BAN_MESSAGE_LENGTH: number;
+    MOD_CLEAR_BAN_MESSAGE_REGEX: RegExp;
+    MOD_INSTANT_FLAG_TYPES: Object;
+    SPAM_COOLDOWN: number;
+    // _$CHAT_MENU: r;
+    _PLAYER_COMMANDS_TEMPLATE: string;
+    _QUEUE_ENTRY_TEMPLATE: string;
+    _TABS: Object;
+    _answerResultsListener: Listener;
+    _chatUpdateListener: Listener;
+    _deleteChatMessageListener: Listener;
+    _deleteChatMessagesListener: Listener;
+    _deletePlayerMessagesListener: Listener;
+    _emoteOnlyChangeListener: Listener;
+    _forceSpectatorListner: Listener;
+    _hostPromotionListner: Listener;
+    _jamModWarningListener: Listener;
+    _kickedFromGameListner: Listener;
+    _newMessageListner: Listener;
+    _newQueueEntryListener: Listener;
+    _newSpectatorListner: Listener;
+    _newSystemMessageListner: Listener;
+    _pauseTriggerListener: Listener;
+    _playerLateJoinListener: Listener;
+    _playerLeaveListner: Listener;
+    _playerLeftQueueListener: Listener;
+    _playerNameChangeListner: Listener;
+    _playerRejoiningListener: Listener;
+    _settingChangeListener: Listener;
+    _spectatorChangeToPlayer: Listener;
+    _spectatorLeftListner: Listener;
+    _spectatorNameChangeListner: Listener;
+    _unpauseTriggerListener: Listener;
+    addPlayerToQueue: function;
+    addSpectator: function;
+    atSelfRegex: RegExp;
+    banMessage: function;
+    bindSpectatorClickFunctions: function;
+    chatMessage: function;
+    clearBannedMessages: function;
+    closeView: function;
+    constructor();
+    currentMessageCount: number;
+    currentTab: number;
+    deletePlayersMessagesInChat: function;
+    disableHostOptions: function;
+    displayBossMode: function;
+    displayEmoteOnlyMessage: function;
+    displayJoinLeaveMessages: boolean;
+    displaySlowModeMessage: function;
+    emoteBubler: EmoteBubler;
+    emoteSelectorWrapper: EmoteSelectorInputWrapper;
+    enableHostOptions: function;
+    focus: function;
+    getTeamChatToggleSwitchActive: function;
+    handleJamModTimeout: function;
+    hideBossMode: function;
+    insertEmoji: function;
+    insertMsg: function;
+    insertText: function;
+    isShown: function;
+    jamChatMode: boolean;
+    jamModWarningLog: Object;
+    joinLeaveQueue: function;
+    kickSpectator: function;
+    lastChatCursorPosition: number;
+    lastMessageCooldown: number;
+    lastMessageInfo: null;
+    messageContainsNonEmotes: function;
+    messageRepeated: function;
+    noEmoteMode: boolean;
+    onlyEmoteMode: null;
+    open: boolean;
+    openView: function;
+    playerMsgBadgeTemplate: string;
+    playerMsgTemplate: string;
+    playerOnlyMode: boolean;
+    queueMap: Object;
+    removePlayerFromQueue: function;
+    removeSpectator: function;
+    removeTwoOldestMessages: function;
+    resetQueue: function;
+    resetView: function;
+    sendMessage: function;
+    serverMsgTemplate: string;
+    setPlayerOnlyMode: function;
+    setQueueButtonState: function;
+    setSpectatorButtonState: function;
+    setup: function;
+    slowModeActive: boolean;
+    spectatorListItemTemplate: string;
+    spectators: Array;
+    systemMessage: function;
+    teamChatSwitch: Switch;
+    toggleQueueTab: function;
+    toggleShowTeamChatSwitch: function;
+    updateChatScroll: function;
+    updateNameInChat: function;
+    updateSpectatorNameFontSize: function;
+    viewChat: function;
+    viewQueue: function;
+    viewSpectators: function;
+}
 
 declare class Lobby {
     // $battleRoyalRuleModal: r;
@@ -33,7 +183,7 @@ declare class Lobby {
     changeToSpectator: function;
     checkAutoDisplayRuleModal: function;
     closeView: function;
-    constructor() ;
+    constructor();
     fireMainButtonEvent: function;
     getPlayerByName: function;
     inLobby: boolean;
@@ -140,7 +290,7 @@ declare class Quiz {
     clearAbilityTarget: function;
     clearSwapIcons: function;
     closeView: function;
-    constructor() ;
+    constructor();
     currentAbilityTarget: null;
     displayAbilityTarget: function;
     displayListNumber: function;

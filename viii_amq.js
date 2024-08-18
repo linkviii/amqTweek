@@ -15,19 +15,7 @@
 // <reference path="./JQuery.d.ts"/>
 /// <reference path="./amq.d.ts"/>
 
-/* AMQ globals: */
 
-/** @type {string} Name of logged in user. */
-var selfName;
-
-/** Instance of GameChat */
-var gameChat;
-
-/** @type {Lobby} */
-var lobby;
-
-/** @type {Quiz} */
-var quiz;
 
 /* ---------------------------------------------------- */
 
@@ -63,116 +51,192 @@ viii.systemMsg = function (a, b) {
 };
 
 // -------------------------
-
-viii.insertStyle = function () {
-	$("#viii-style").remove();
-
-	// https://github.com/GNOME/gnome-backgrounds/tree/main/backgrounds
-	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/mainline/backgrounds/adwaita-night.jpg )";
-	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.jpg )";
-	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/master/backgrounds/adwaita-night.png )";
-	//const backgroundSrc = "url( https://raw.githubusercontent.com/GNOME/gnome-backgrounds/main/backgrounds/adwaita-d.jpg )";
-	const backgroundSrc = "url( https://github.com/GNOME/gnome-backgrounds/raw/591da8c220b2bd071b057e6a6112d53f21ccaaf8/backgrounds/adwaita-d.jpg )";
-
-	const stupidface = "url( https://i.imgur.com/YkF6ke3.png )";
-
-	const amqGrey = "#424242";
+/*
+viii.style_ = function () {
+	const styleId = "viii-style-"
+	$("#" + styleId).remove();
 
 	let text = [
-		// game page background
-		"#gameContainer { background-image: " + backgroundSrc + "; background-size: cover; }",
-		"#gameChatPage > .col-xs-9 { background-image: " + backgroundSrc + "; background-size: cover;}",
-		// Chat colors
-		".gcUserName { color: springgreen; }",
-		".viii-yes { color: green; }",
-		".viii-no { color: red; }",
-		".viii-round { color: cyan }",
-		// Box backgrounds
-		".qpAvatarImageContainer.floatingContainer { background: transparent; }",
-		//".floatingContainer { background-color: transparent; box-shadow: none; }",
-		// Countdown / hide answer box
-		".qpVideoOverlay  { background-image: " + stupidface + "; background-size: cover;}",
-		// Countdown text
-		"#qpHiderText { display: inline; border-radius: 20px; padding: 5px; background-color: rgba(0, 0, 0, 0.48); } ",
-		// Song name+artist cover. Transparent color text to hide the "?"
-		"#qpInfoHider { background-image: " + stupidface + "; background-size: contain; color: transparent; }",
-		// Box above the video
-		"#qpAnimeNameHider  { background-image: " + stupidface + "; background-size: cover; color: transparent; }",
-		// 👍👎
-		".qpSingleRateContainer { background: transparent; border: azure 2px solid; }",
-		// Restore background for avatar's answer
-		//".qpAvatarAnswerContainer {background-color: " + amqGrey + "; }",
-		//".lobbyAvatarTeamSelector {background-color: " + amqGrey + "; }",
-		//".popoutMessage {background-color: " + amqGrey + "; }",
-		//".playerProfileContainer {background-color: " + amqGrey + "; }",
-		//
-
-		// Make the user score box not overlap with the answer
-		".qpAvatarStatusOuterContainer { position: unset; transform: unset; width: unset; ; display: inline; overflow: unset; }",
-		".qpAvatarStatusInnerContainer { position: unset; transform: unset; width: unset; ; display: inline; }",
-		//".qpAvatarStatus {color: white;}",
-		// Make the glow more noticable
-		".lbReady .lobbyAvatarImgContainer { box-shadow: 0px 0px 10px 2px rgb(134, 204, 255); }",
-		//
-		".qpAvatarStatus, .qpAvatarStatusBar { "
-		+ "position: unset; "
-		+ "text-align: center; "
-		// Negative margin allows floats to overlap
-		+ "margin-left: -100px; float: right; "
-		+ "width: unset; height: unset; border-radius: 20px; "
-		+ " }",
-		//
-		".awesomplete {font-family: monospace;}",
-		// Make text box sit inside the status box. 
-		".qpAvatarAnswerContainer {top: -29px;} ",
-		".qpAvatarStatusBar {transform: translateX(10px) translateY(-32px); min-width: 31px; min-height: 31px; opacity: unset; }",
-		".qpAvatarStatus    {transform: translateX(12px) translateY(-30px); min-width: 26px; min-height: 26px; background-color: #2e51a2; }",
-		// Default is blue against blue.
-		".qpAvatarStatusBar.completed, .qpAvatarStatusBar.looted { background-color: white; }",
-		// bd7efd Default appears purpleish but is actually just sort of transparent white on blue
-		".qpAvatarStatusBar.planning {background-color: #b873ff; }",
-		//
-		// Make the skip song button always to the left of the answer box
-		//		`#qpSkipContainer.highlight #qpVoteSkip,
-		//		#qpSkipContainer:hover #qpVoteSkip,
-		//		#qpSkipContainer.votePreview #qpVoteSkip,
-		//		#qpSkipContainer.preDisable #qpVoteSkip,
-		//		#qpVoteSkip,
-		//		#qpVoteState,
-		//		#qpSkipContainer:hover,
-		//		#qpSkipContainer:hover #qpVoteState,
-		//		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
-		//		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
-		//			transform: unset;
-		//			transition: unset;
-		//		}
-		//		
-		//		#qpSkipContainer {
-		//			overflow: visible;
-		//			transform: unset;
-		//			left: -114px;
-		//			width: 114px;
-		//		}
-		//		
-		//		#qpVoteStateContainer {
-		//			overflow: visible;
-		//		}`,
-		//
-
+		``,
 	].join("\n");
-	// + "background-color: " + amqGrey + "; color: #09baffdb;"
 
 	let style = document.createElement("style");
-	style.id = "viii-style";
+	style.id = styleId;
 	style.textContent = text;
 
 	document.head.appendChild(style);
 
+}
+*/
+
+viii.styleGeneral = function () {
+	const styleId = "viii-style-general";
+	$("#" + styleId).remove();
+
+	// https://github.com/GNOME/gnome-backgrounds/tree/main/backgrounds
+	const backgroundSrc = "url( https://github.com/GNOME/gnome-backgrounds/raw/591da8c220b2bd071b057e6a6112d53f21ccaaf8/backgrounds/adwaita-d.jpg )";
+	// A wonderfully stupid face
+	const accentBackground = "url( https://i.imgur.com/YkF6ke3.png )";
+
+	const amqGrey = "#424242";
+
+	let text = [
+		``,
+		// game page background
+		`#gameContainer { 
+			background-image: ${backgroundSrc}; 
+			background-size: cover; 
+		}`,
+		// What did this one apply to?
+		`#gameChatPage > .col-xs-9 { 
+			background-image: ${backgroundSrc}; 
+			background-size: cover;
+		}`,
+		// Chat colors
+		`.gcUserName { color: springgreen; }`, // TODO: Style only the default user color
+		`.viii-yes { color: green; }`,
+		`.viii-no { color: red; }`,
+		`.viii-round { color: cyan; }`,
+		// Song History table
+		`.shSongTable tr.correctGuess { background-color: #153e15; }`,
+		// Box backgrounds
+		// TODO: Opt into transparent instead of default
+		`.qpAvatarImageContainer.floatingContainer { background: transparent; }`,
+		//".floatingContainer { background-color: transparent; box-shadow: none; }",
+		// Countdown / hide answer box
+		`.qpVideoOverlay  { background-image: ${accentBackground}; background-size: cover;}`,
+		// Countdown text
+		`#qpHiderText { display: inline; border-radius: 20px; padding: 5px; background-color: rgba(0, 0, 0, 0.48); } `,
+		// Song name+artist cover. Transparent color text to hide the "?"
+		`#qpInfoHider { background-image: ${accentBackground}; background-size: contain; color: transparent; }`,
+		// Box above the video
+		`#qpAnimeNameHider  { background-image: ${accentBackground}; background-size: cover; color: transparent; }`,
+		// 👍👎
+		`.qpSingleRateContainer { background: transparent; border: azure 2px solid; }`,
+
+	].join("\n");
+
+	let style = document.createElement("style");
+	style.id = styleId;
+	style.textContent = text;
+
+	document.head.appendChild(style);
+
+	/* Broken code to move skip button */
 	// Remove slant style
 	//$("#qpVoteSkip").removeClass("leftRightButtonTop");
 	//$("#qpVoteState").on("click", () => quiz.skipClicked());
+	//
+	// Make the skip song button always to the left of the answer box
+	//		`#qpSkipContainer.highlight #qpVoteSkip,
+	//		#qpSkipContainer:hover #qpVoteSkip,
+	//		#qpSkipContainer.votePreview #qpVoteSkip,
+	//		#qpSkipContainer.preDisable #qpVoteSkip,
+	//		#qpVoteSkip,
+	//		#qpVoteState,
+	//		#qpSkipContainer:hover,
+	//		#qpSkipContainer:hover #qpVoteState,
+	//		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
+	//		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
+	//			transform: unset;
+	//			transition: unset;
+	//		}
+	//		
+	//		#qpSkipContainer {
+	//			overflow: visible;
+	//			transform: unset;
+	//			left: -114px;
+	//			width: 114px;
+	//		}
+	//		
+	//		#qpVoteStateContainer {
+	//			overflow: visible;
+	//		}`,
+	//
+
 
 };
+// viii.styleGeneral();
+
+// ----------------
+// ----------------
+// ----------------
+
+viii.styleWatchStatus = function () {
+	const styleId = "viii-style-watch-status";
+	$("#" + styleId).remove();
+
+	let text = [
+		// Make the user score box not overlap with the answer
+		`.qpAvatarStatusOuterContainer { 
+			position: unset; 
+			transform: unset; 
+			width: unset;  
+			display: inline; 
+			overflow: unset; 
+		}`,
+		`.qpAvatarStatusInnerContainer { 
+			position: unset; 
+			transform: unset; 
+			width: unset;  
+			display: inline; 
+		}`,
+		// 
+		`.qpSingleRateContainer { 
+			background: transparent; 
+			border: azure 2px solid; 
+		}`,
+
+		// Make text box sit inside the status box. 
+		`.qpAvatarAnswerContainer {
+			top: -29px;
+		} `,
+		`.qpAvatarStatusBar {
+			transform: translateX(10px) translateY(-32px); 
+			min-width: 31px; 
+			min-height: 31px; 
+			opacity: unset; 
+		}`,
+		`.qpAvatarStatus {
+			transform: translateX(12px) translateY(-30px); 
+			min-width: 26px; 
+			min-height: 26px; 
+			background-color: #2e51a2; 
+		}`,
+		// Default is blue against blue.
+		`.qpAvatarStatusBar.completed, .qpAvatarStatusBar.looted { 
+			background-color: white; 
+		}`,
+		// bd7efd Default appears purpleish but is actually just sort of transparent white on blue
+		`.qpAvatarStatusBar.planning {
+			background-color: #b873ff; 
+		}`,
+		// Negative margin allows floats to overlap
+		`.qpAvatarStatus, .qpAvatarStatusBar { 
+			position: unset; 
+			text-align: center; 
+			margin-left: -100px; 
+			float: right; 
+			width: unset; 
+			height: unset; 
+			border-radius: 20px;  
+		}`,
+	].join("\n");
+
+	let style = document.createElement("style");
+	style.id = styleId;
+	style.textContent = text;
+
+	document.head.appendChild(style);
+
+};
+// viii.styleWatchStatus();
+
+
+// --------------------------
+// --------------------------
+// --------------------------
+
 
 // -------------------------
 
@@ -212,7 +276,7 @@ viii.getScore = function () {
 	for (let data of table) {
 		// @ts-ignore
 		const username = data.querySelector(".qpsPlayerName ").textContent;
-		if (username !== window.selfName)
+		if (username !== selfName)
 			continue;
 		// @ts-ignore
 		const score = data.querySelector(".qpsPlayerScore").textContent;
@@ -230,7 +294,7 @@ viii.logAnsInChat = function () {
 
 	// For local messages it seems AMQ just injects html.
 	// No reason not to do that I guess. 
-	let correctClass = viii.isCorrect(window.selfName);
+	let correctClass = viii.isCorrect(selfName);
 
 	let count = $("#qpCurrentSongCount").text();
 	let total = $("#qpTotalSongCount").text();
@@ -468,19 +532,17 @@ viii.dumpTypes = function (thing) {
 
 // -------------------------
 
-viii.attatch = function () {
+viii.attach = function () {
 	// Attempt to reset modifications before adding more.
 	if (viii.isAttached) viii.off();
 
 	viii.isAttached = true;
 	let [theWatched, onThe] = viii.getWatched();
-	if (viii.lvl2) {
-		// @ts-ignore
-		theWatched.on("DOMSubtreeModified", onThe, viii.logAnsInChat);
-	}
+	// @ts-ignore
+	theWatched.on("DOMSubtreeModified", onThe, viii.logAnsInChat);
 
-	window.onkeyup = viii.parseKeysUp;
-	window.onkeydown = viii.parseKeysDown;
+	onkeyup = viii.parseKeysUp;
+	onkeydown = viii.parseKeysDown;
 
 	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
 	$("#menuBarOptionContainer")[0].onclick = function () {
@@ -489,10 +551,35 @@ viii.attatch = function () {
 	};
 
 	//
-	viii.insertStyle();
+	// viii.insertStyle();
+	viii.styleWatchStatus();
+	viii.styleGeneral();
 
 	if (viii.roundsPlayed === undefined) viii.roundsPlayed = -1;
 };
+
+
+viii.bannerBuy = function () {
+	// @ts-ignore
+	let avatarList = document.getElementById("swContentAvatarContainer").querySelectorAll(".swAvatarTile");
+	for (let avatar of avatarList) {
+		let banner = avatar.querySelector(".swAvatarTileFooter");
+
+		// @ts-ignore
+		banner.onclick = () => {
+			// Focus this avatar
+			// @ts-ignore
+			banner.parentElement.click();
+			// Click "Unlock" on the right
+			// @ts-ignore
+			document.getElementById("swRightColumnActionButtonText").click();
+			// XXX Actually click buy
+			// @ts-ignore
+			document.getElementById("swPriceBuyButton").click();
+		};
+	}
+};
+
 // -------------------------
 
 
@@ -501,16 +588,28 @@ viii.hello = function () {
 	console.log("viii's script loaded.");
 };
 
-viii.idk = function () {
+
+viii.idk1 = function () {
 	console.log(selfName);
+	console.log(lobby);
+	console.log(selfName);
+	console.log(lobby);
+};
+
+viii.idk2 = () => {
+	console.log(selfName);
+	console.log(lobby);
+	console.log(selfName);
+	console.log(lobby);
 };
 
 
+// ----------------------------------------------------------------------------------------------
 
 viii.hello();
 let loadInterval = setInterval(() => {
-    if ($("#loadingScreen").hasClass("hidden")) {
-        clearInterval(loadInterval);
-        viii.attatch();
-    }
+	if ($("#loadingScreen").hasClass("hidden")) {
+		clearInterval(loadInterval);
+		viii.attach();
+	}
 }, 500);
