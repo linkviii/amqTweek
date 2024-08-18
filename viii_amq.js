@@ -1,60 +1,70 @@
-//TODO     
-// Paste into brower console
-// Tested with firefox
-// AMQ uses jquery so might as well go all in with it?
+// @ts-check
+// ==UserScript==
+// @name         viii.idk.js
+// @namespace    http://tampermonkey.net/
+// @version      2024-08-18
+// @description  try to take over the world!
+// @author       You
+// @match        https://animemusicquiz.com/
+// @icon         https://www.google.com/s2/favicons?sz=64&domain=animemusicquiz.com
+// @grant        unsafeWindow
+// ==/UserScript==
 
 
+'use strict';
+// <reference path="./JQuery.d.ts"/>
+/// <reference path="./amq.d.ts"/>
 
-// Not sure if using tag id's or .$ references on global objects is 
-// more resilient to change. I'll find out when stuff breaks.
-// I just expect things to break. Its fine.
+/* AMQ globals: */
 
-// Namespacing my global js with 'viii'. 
-// Probably could use an object or something but, eh, keeping it simple.
+/** @type {string} Name of logged in user. */
+var selfName;
 
-/*
- * Global amq objects:
- * quiz
- * gameChat
- * options
- *  
- */
+/** Instance of GameChat */
+var gameChat;
 
-// probably is some way to find the logged in player's username...
-var viii_userName = "linkviii";
+/** @type {Lobby} */
+var lobby;
 
-var viii_isAttached;
+/** @type {Quiz} */
+var quiz;
 
-var viii_roundsPlayed;
+/* ---------------------------------------------------- */
 
-// Enable level 2 enhancments which may be frowned on
-// mutation observer, $input
-var viii_lvl2 = false;
 
-var viii_record = false;
+/* Var will let me copy paste this script into the console */
+var viii = {};
+unsafeWindow.viii = viii;
 
-var viii_song_list = [];
+// -------------------------
 
-var viii_hideChatThings = false;
+viii.roundsPlayed = 0;
+
+viii.chatModsHidden = false;
+
+viii.lvl2 = false;
+// -------------------------
 
 /** Wrap str with my span I can hide ? */
-function viii_tag(str) {
-	const hideMe = '';
-	return `<span class="viii-tag" ${hideMe}>${str}</span>`;
-}
+viii.viiiTag = function (str) {
+	return `<span class="viii-tag">${str}</span>`;
+};
 
-function viii_systemMsg(a, b) {
-	a = viii_tag(a);
-	if (b !== '') b = viii_tag(b);
+
+viii.systemMsg = function (a, b) {
+	a = viii.viiiTag(a);
+	if (b !== '') b = viii.viiiTag(b);
 
 	// TODO: just directly add to the list
 	gameChat.systemMessage(a, b);
-	if (viii_hideChatThings) {
+	if (viii.chatModsHidden) {
 		$("#gcMessageContainer > li:has(.viii-tag):last-of-type").hide();
 	}
-}
+};
 
-function viii_insertStyle() {
+// -------------------------
+
+viii.insertStyle = function () {
 	$("#viii-style").remove();
 
 	// https://github.com/GNOME/gnome-backgrounds/tree/main/backgrounds
@@ -123,30 +133,30 @@ function viii_insertStyle() {
 		".qpAvatarStatusBar.planning {background-color: #b873ff; }",
 		//
 		// Make the skip song button always to the left of the answer box
-//		`#qpSkipContainer.highlight #qpVoteSkip,
-//		#qpSkipContainer:hover #qpVoteSkip,
-//		#qpSkipContainer.votePreview #qpVoteSkip,
-//		#qpSkipContainer.preDisable #qpVoteSkip,
-//		#qpVoteSkip,
-//		#qpVoteState,
-//		#qpSkipContainer:hover,
-//		#qpSkipContainer:hover #qpVoteState,
-//		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
-//		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
-//			transform: unset;
-//			transition: unset;
-//		}
-//		
-//		#qpSkipContainer {
-//			overflow: visible;
-//			transform: unset;
-//			left: -114px;
-//			width: 114px;
-//		}
-//		
-//		#qpVoteStateContainer {
-//			overflow: visible;
-//		}`,
+		//		`#qpSkipContainer.highlight #qpVoteSkip,
+		//		#qpSkipContainer:hover #qpVoteSkip,
+		//		#qpSkipContainer.votePreview #qpVoteSkip,
+		//		#qpSkipContainer.preDisable #qpVoteSkip,
+		//		#qpVoteSkip,
+		//		#qpVoteState,
+		//		#qpSkipContainer:hover,
+		//		#qpSkipContainer:hover #qpVoteState,
+		//		#qpSkipContainer.votePreview>#qpVoteStateContainer>#qpVoteState,
+		//		#qpSkipContainer.preDisable>#qpVoteStateContainer>#qpVoteState {
+		//			transform: unset;
+		//			transition: unset;
+		//		}
+		//		
+		//		#qpSkipContainer {
+		//			overflow: visible;
+		//			transform: unset;
+		//			left: -114px;
+		//			width: 114px;
+		//		}
+		//		
+		//		#qpVoteStateContainer {
+		//			overflow: visible;
+		//		}`,
 		//
 
 	].join("\n");
@@ -162,26 +172,25 @@ function viii_insertStyle() {
 	//$("#qpVoteSkip").removeClass("leftRightButtonTop");
 	//$("#qpVoteState").on("click", () => quiz.skipClicked());
 
-}
+};
 
-t00_nameFromAvatarElem = function (elem) {
-	return elem.id.substr(9);
-}
+// -------------------------
 
-function viii_nameFromAvatarElm(elm) {
+viii.nameFromAvatarElm = function (elm) {
 
 	let name = elm.getElementsByClassName("qpAvatarName")[0];
 	return name.innerText;
-}
+};
+
 
 // Probably better ways to do this but I guess it works...
-function viii_isCorrect(username) {
+viii.isCorrect = function (username) {
 	let avatarElems = document.getElementsByClassName("qpAvatarContainer");
 
 	let playerNum;
 	let playerNames = [];
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
-		playerNames.push(viii_nameFromAvatarElm(avatarElems[playerNum]));
+		playerNames.push(viii.nameFromAvatarElm(avatarElems[playerNum]));
 	}
 
 	for (playerNum = 0; playerNum < avatarElems.length; playerNum += 1) {
@@ -193,33 +202,35 @@ function viii_isCorrect(username) {
 	}
 
 	return "";
-}
+};
 
-
-function viii_getScore() {
+viii.getScore = function () {
 
 	// Guess this would work too?
 	// $(".qpScoreBoardEntry").find(".qpsPlayerName.self ").
-	const table = $(".qpScoreBoardEntry")
+	const table = $(".qpScoreBoardEntry");
 	for (let data of table) {
+		// @ts-ignore
 		const username = data.querySelector(".qpsPlayerName ").textContent;
-		if (username !== viii_userName)
+		if (username !== window.selfName)
 			continue;
+		// @ts-ignore
 		const score = data.querySelector(".qpsPlayerScore").textContent;
-		return score;
+		return String(score);
 	}
 
 
 	//----
 
 	return "";
-}
+};
 
-function viii_logAnsInChat() {
+// -------------------------
+viii.logAnsInChat = function () {
 
 	// For local messages it seems AMQ just injects html.
 	// No reason not to do that I guess. 
-	let correctClass = viii_isCorrect(viii_userName);
+	let correctClass = viii.isCorrect(window.selfName);
 
 	let count = $("#qpCurrentSongCount").text();
 	let total = $("#qpTotalSongCount").text();
@@ -229,71 +240,75 @@ function viii_logAnsInChat() {
 	let type = $("#qpSongType").text();
 	let song = $("#qpSongName").text();
 	let artist = $("#qpSongArtist").text();
+	// @ts-ignore
 	let linkSrc = $("#qpSongVideoLink")[0].href;
 	let linkTag = '<a href="' + linkSrc + '" target="_blank"> [+] </a>';
 
 	let a = progress + ": " + anime + " " + linkTag;
 	let b = type + ": " + song + " <b>[by]</b> " + artist;
 
-	viii_systemMsg(a, b);
+	viii.systemMsg(a, b);
 
-	if (viii_record) {
-		let obj = {
-			type: type,
-			song: song,
-			artist: artist,
-			linkSrc: linkSrc,
-			anime: anime
-		};
-		viii_song_list.push(obj);
-	}
+	// if (viii.record) {
+	// 	let obj = {
+	// 		type: type,
+	// 		song: song,
+	// 		artist: artist,
+	// 		linkSrc: linkSrc,
+	// 		anime: anime
+	// 	};
+	// 	viii.song_list.push(obj);
+	// }
 
+	// TODO look for a round end event. This is broken with lives
 	//  Check for last song and report score.
 	if (parseInt(count) == parseInt(total)) {
-		let score = viii_getScore();
-		viii_roundsPlayed++;
-		let a = '<span class="viii-round">Round ' + viii_roundsPlayed + '</span>';
+		// TODO score need not be the same as songs correct
+		let score = viii.getScore();
+		viii.roundsPlayed++;
+		let a = '<span class="viii-round">Round ' + viii.roundsPlayed + '</span>';
 		let b = score + ' / ' + count;
 		if (parseInt(score) === 0) {
 			b = '';
 		}
 
-		viii_systemMsg(a, b);
+		viii.systemMsg(a, b);
 	}
-}
+};
 
 /**
  * Watching qpInfoHider for when results shown.
  */
-function viii_getWatched() {
+viii.getWatched = function () {
 	const id = "#qpInfoHider";
 	const changeSelector = id + ".hide";
 	return [$(id).parent(), changeSelector];
-}
-
-var viii_keymap = {
+};
+// -------------------------
+viii.keymap = {
 	'tab': 9, 'enter': 13,
 	',': 188, '.': 190, '/': 191, "'": 222,
 	'a': 65, 'b': 66, 's': 83, 'h': 72, 'm': 77, 'f': 70, 'd': 68,
 	'up': 38, 'down': 40, 'left': 37, 'right': 39
 };
 
-var viii_debug_input = false;
+viii.debug_input = false;
 
-function viii_parseKeysUp(e) {
+viii.parseKeysUp = function (e) {
 	let key = e.keyCode ? e.keyCode : e.which;
 
 	let target = $(e.target);
+	// @ts-ignore
 	let focusedTag = $(document.activeElement).get(0).tagName.toLowerCase();
 	let inputFocused = focusedTag === "textarea" || focusedTag === "input";
 
 	// Ignore quick search
 	if (!inputFocused) {
 		switch (key) {
-			case viii_keymap["."]:
-			case viii_keymap["/"]:
-			case viii_keymap["'"]:
-			case viii_keymap['a']:
+			case viii.keymap["."]:
+			case viii.keymap["/"]:
+			case viii.keymap["'"]:
+			case viii.keymap['a']:
 				e.preventDefault();
 
 		}
@@ -303,8 +318,10 @@ function viii_parseKeysUp(e) {
 	// Probably a better way to go about this but, it works.
 
 
-	if (false && viii_lvl2) if (key === viii_keymap['tab']) {
+	if (false && viii.lvl2) if (key === viii.keymap['tab']) {
+		// @ts-ignore
 		const active = document.activeElement.id;
+		// @ts-ignore
 		if (active === "qpAnswerInput" || $("#qpAnswerInput")[0].disabled) {
 			$("#gcInput")[0].click();
 			$("#gcInput").focus();
@@ -316,43 +333,43 @@ function viii_parseKeysUp(e) {
 
 	if (e.ctrlKey) {
 		let keyName = String.fromCharCode(e.which).toLowerCase(); // some lie... 
-		if (viii_debug_input) {
+		if (viii.debug_input) {
 			console.log(key + ": " + keyName);
 		}
 
 
 		switch (key) {
-			case viii_keymap['enter']:
-				console.log(e)
+			case viii.keymap['enter']:
+				console.log(e);
 				if (lobby.inLobby) {
 					lobby.fireMainButtonEvent();
 				} else {
-					quiz.skipClicked()
+					quiz.skipClicked();
 				}
 				break;
-			case viii_keymap['/']:
-				if (viii_lvl2) $("#qpAnswerInput").val('');
+			case viii.keymap['/']:
+				if (viii.lvl2) $("#qpAnswerInput").val('');
 				break;
-			case viii_keymap['m']:
-			case viii_keymap[',']:
-				$('#qpVolumeIcon')[0].click()
+			case viii.keymap['m']:
+			case viii.keymap[',']:
+				$('#qpVolumeIcon')[0].click();
 				e.preventDefault();
 				break;
-			case viii_keymap['b']:
+			case viii.keymap['b']:
 				e.preventDefault();
 
 				break;
-			case viii_keymap['s']:
+			case viii.keymap['s']:
 				e.preventDefault();
 				break;
-			case viii_keymap['h']:
+			case viii.keymap['h']:
 				// toggle(true) → .show()
-				$("#gcMessageContainer > li:has(.viii-tag)").toggle(viii_hideChatThings);
-				viii_hideChatThings = !viii_hideChatThings;
+				$("#gcMessageContainer > li:has(.viii-tag)").toggle(viii.hideChatThings);
+				viii.hideChatThings = !viii.hideChatThings;
 				break;
 
-			case viii_keymap['d']:
-			case viii_keymap['f']:
+			case viii.keymap['d']:
+			case viii.keymap['f']:
 				e.preventDefault();
 				break;
 
@@ -360,23 +377,24 @@ function viii_parseKeysUp(e) {
 
 		}
 	}
-}
+};
 
-function viii_parseKeysDown(e) {
+viii.parseKeysDown = function (e) {
 	let key = e.keyCode ? e.keyCode : e.which;
 
 	let target = $(e.target);
+	// @ts-ignore
 	let focusedTag = $(document.activeElement).get(0).tagName.toLowerCase();
 	let inputFocused = focusedTag === "textarea" || focusedTag === "input";
 
 	// Ignore quick search
 	if (!inputFocused) {
 		switch (key) {
-			case viii_keymap["."]:
-			case viii_keymap["/"]:
-			case viii_keymap['h']:
-			case viii_keymap["'"]:
-			case viii_keymap['a']:
+			case viii.keymap["."]:
+			case viii.keymap["/"]:
+			case viii.keymap['h']:
+			case viii.keymap["'"]:
+			case viii.keymap['a']:
 				e.preventDefault();
 
 		}
@@ -386,15 +404,15 @@ function viii_parseKeysDown(e) {
 	if (e.ctrlKey) {
 
 		switch (key) {
-			//case viii_keymap['enter']:
-			case viii_keymap['d']:
-			case viii_keymap['/']:
-			case viii_keymap[',']:
-			case viii_keymap['b']:
-			case viii_keymap['h']:
-			case viii_keymap['s']:
-			case viii_keymap['m']:
-			case viii_keymap['f']:
+			//case viii.keymap['enter']:
+			case viii.keymap['d']:
+			case viii.keymap['/']:
+			case viii.keymap[',']:
+			case viii.keymap['b']:
+			case viii.keymap['h']:
+			case viii.keymap['s']:
+			case viii.keymap['m']:
+			case viii.keymap['f']:
 
 				e.preventDefault();
 				break;
@@ -402,61 +420,97 @@ function viii_parseKeysDown(e) {
 
 		}
 	}
-}
+};
+// -------------------------
 
-function viii_attatch() {
-	// Attempt to reset modifications before adding more.
-	if (viii_isAttached) viii_off();
-
-	viii_isAttached = true;
-	let [theWatched, onThe] = viii_getWatched();
-	if (viii_lvl2) theWatched.on("DOMSubtreeModified", onThe, viii_logAnsInChat);
-
-	window.onkeyup = viii_parseKeysUp;
-	window.onkeydown = viii_parseKeysDown;
-
-	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
-	$("#menuBarOptionContainer")[0].onclick = function () { $("#settingModal").modal(); };
-
-	//
-	viii_insertStyle();
-
-	if (viii_roundsPlayed === undefined) viii_roundsPlayed = -1;
-}
-
-function viii_off() {
-	viii_isAttached = false;
-
-	const theWatched = viii_getWatched()[0];
-	theWatched.off("DOMSubtreeModified");
-
-	window.onkeyup = null;
-	window.onkeydown = null;
-	$("#menuBarOptionContainer")[0].onclick = null;
-
-	$("#viii-style").remove();
-}
-
-function viii_go2() {
-	viii_lvl2 = true;
-	viii_attatch();
-}
-
-function viii_bannerBuy() {
-	avatarList = document.getElementById("swContentAvatarContainer").querySelectorAll(".swAvatarTile")
-	for (let avatar of avatarList) {
-		let banner = avatar.querySelector(".swAvatarTileFooter")
-
-		banner.onclick = () => {
-			// Focus this avatar
-			banner.parentElement.click()
-			// Click "Unlock" on the right
-			document.getElementById("swRightColumnActionButtonText").click()
-			// XXX Actually click buy
-			document.getElementById("swPriceBuyButton").click()
+viii.typeof = function (thing) {
+	if (thing === null) {
+		return "null";
+	}
+	if (thing === undefined) {
+		return "undefined";
+	}
+	let typename = typeof thing;
+	if ("object" === typename) {
+		if (thing.constructor.name) {
+			typename = thing.constructor.name;
 		}
 	}
-}
+	return typename;
+};
 
-// viii_attatch();
-viii_go2();
+viii.dumpTypes = function (thing) {
+	let proto = Object.getPrototypeOf(thing);
+	// props.push(...Object.getOwnPropertyNames(proto));
+
+	const dump = (thing) => {
+		let props = Object.getOwnPropertyNames(thing);
+		let desc = Object.getOwnPropertyDescriptors(thing);
+		let txt = props.map((name) => {
+			if (name === "constructor") return "constructor();";
+			let typename = "";
+			if (desc[name].get) {
+				typename = "any";
+			} else {
+				typename = viii.typeof(thing[name]);
+			}
+			return `${name}: ${typename};`;
+		});
+		return txt;
+	};
+
+	let txt = dump(thing);
+	txt.push(...dump(proto));
+	txt = txt.sort();
+
+	return "\n" + txt.join("\n") + "\n";
+};
+
+// -------------------------
+
+viii.attatch = function () {
+	// Attempt to reset modifications before adding more.
+	if (viii.isAttached) viii.off();
+
+	viii.isAttached = true;
+	let [theWatched, onThe] = viii.getWatched();
+	if (viii.lvl2) {
+		// @ts-ignore
+		theWatched.on("DOMSubtreeModified", onThe, viii.logAnsInChat);
+	}
+
+	window.onkeyup = viii.parseKeysUp;
+	window.onkeydown = viii.parseKeysDown;
+
+	// Open settings modal dialog on click of gear instead of hovering over it and then clicking "settings"
+	$("#menuBarOptionContainer")[0].onclick = function () {
+		// @ts-ignore
+		$("#settingModal").modal();
+	};
+
+	//
+	viii.insertStyle();
+
+	if (viii.roundsPlayed === undefined) viii.roundsPlayed = -1;
+};
+// -------------------------
+
+
+
+viii.hello = function () {
+	console.log("viii's script loaded.");
+};
+
+viii.idk = function () {
+	console.log(selfName);
+};
+
+
+
+viii.hello();
+let loadInterval = setInterval(() => {
+    if ($("#loadingScreen").hasClass("hidden")) {
+        clearInterval(loadInterval);
+        viii.attatch();
+    }
+}, 500);

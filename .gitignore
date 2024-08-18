@@ -3,4 +3,6 @@ hidden/
 .vscode
 *
 !viii_amq.js
+!amq.d.ts
+!JQuery.d.ts
 #
