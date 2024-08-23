@@ -93,7 +93,8 @@ viii.styleGeneral = function () {
 			background-size: cover;
 		}`,
 		// Chat colors
-		`.gcUserName { color: springgreen; }`, // TODO: Style only the default user color
+		// .gcUserName would override all color styles. This selects only the default name color.
+		`[class="gcUserName clickAble"] { color: springgreen; }`, 
 		`.viii-yes { color: green; }`,
 		`.viii-no { color: red; }`,
 		`.viii-round { color: cyan; }`,
@@ -412,7 +413,7 @@ viii.parseKeysUp = function (e) {
 				}
 				break;
 			case viii.keymap['/']:
-				if (viii.lvl2) $("#qpAnswerInput").val('');
+				$("#qpAnswerInput").val('');
 				break;
 			case viii.keymap['m']:
 			case viii.keymap[',']:
@@ -504,6 +505,11 @@ viii.typeof = function (thing) {
 };
 
 viii.dumpTypes = function (thing) {
+	let declare = "";
+	if (thing.constructor?.name){
+		declare  = `declare class ${thing.constructor.name} `
+
+	}
 	let proto = Object.getPrototypeOf(thing);
 	// props.push(...Object.getOwnPropertyNames(proto));
 
@@ -527,7 +533,7 @@ viii.dumpTypes = function (thing) {
 	txt.push(...dump(proto));
 	txt = txt.sort();
 
-	return "\n" + txt.join("\n") + "\n";
+	return "\n\n" + `${declare} { \n\n` + txt.join("\n") + "\n}\n\n";
 };
 
 // -------------------------
@@ -607,9 +613,16 @@ viii.idk2 = () => {
 // ----------------------------------------------------------------------------------------------
 
 viii.hello();
-let loadInterval = setInterval(() => {
-	if ($("#loadingScreen").hasClass("hidden")) {
-		clearInterval(loadInterval);
-		viii.attach();
-	}
-}, 500);
+
+if (document.getElementById("startPage")) {
+
+}else {
+
+	let loadInterval = setInterval(() => {
+		console.log("Waiting for amq to load")
+		if ($("#loadingScreen").hasClass("hidden")) {
+			clearInterval(loadInterval);
+			viii.attach();
+		}
+	}, 500);
+}
