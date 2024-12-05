@@ -94,7 +94,7 @@ viii.styleGeneral = function () {
 		}`,
 		// Chat colors
 		// .gcUserName would override all color styles. This selects only the default name color.
-		`[class="gcUserName clickAble"] { color: springgreen; }`, 
+		`[class="gcUserName clickAble"] { color: springgreen; }`,
 		`.viii-yes { color: green; }`,
 		`.viii-no { color: red; }`,
 		`.viii-round { color: cyan; }`,
@@ -102,7 +102,7 @@ viii.styleGeneral = function () {
 		`.shSongTable tr.correctGuess { background-color: #153e15; }`,
 		// Box backgrounds
 		// TODO: Opt into transparent instead of default
-		`.qpAvatarImageContainer.floatingContainer { background: transparent; }`,
+		// `.qpAvatarImageContainer.floatingContainer { background: transparent; }`,
 		//".floatingContainer { background-color: transparent; box-shadow: none; }",
 		// Countdown / hide answer box
 		`.qpVideoOverlay  { background-image: ${accentBackground}; background-size: cover;}`,
@@ -114,6 +114,17 @@ viii.styleGeneral = function () {
 		`#qpAnimeNameHider  { background-image: ${accentBackground}; background-size: cover; color: transparent; }`,
 		// 👍👎
 		`.qpSingleRateContainer { background: transparent; border: azure 2px solid; }`,
+		// Quiz maker
+		`.cqcSongBlock .cqcBlockMainContainer { background: black }`,
+		`.cqcSongAnimeInfo {
+			text-decoration: underline dotted gray;
+		}`,
+		`.cqcSongNameInfo {
+			margin-left: 20px;
+		}`,
+		`.cqcRuleBlock.selected {
+			box-shadow: 0 0 10px 4px rgb(247, 255, 0);
+		}`,
 
 	].join("\n");
 
@@ -506,8 +517,8 @@ viii.typeof = function (thing) {
 
 viii.dumpTypes = function (thing) {
 	let declare = "";
-	if (thing.constructor?.name){
-		declare  = `declare class ${thing.constructor.name} `
+	if (thing.constructor?.name) {
+		declare = `declare class ${thing.constructor.name} `;
 
 	}
 	let proto = Object.getPrototypeOf(thing);
@@ -616,10 +627,10 @@ viii.hello();
 
 if (document.getElementById("startPage")) {
 
-}else {
+} else {
 
 	let loadInterval = setInterval(() => {
-		console.log("Waiting for amq to load")
+		console.log("Waiting for amq to load");
 		if ($("#loadingScreen").hasClass("hidden")) {
 			clearInterval(loadInterval);
 			viii.attach();
