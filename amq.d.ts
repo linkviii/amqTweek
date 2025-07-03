@@ -8,11 +8,11 @@ var selfName: string;
 /** Instance of GameChat */
 var gameChat: GameChat;
 
-/** @type {} */
 var lobby: Lobby;
 
-/** @type {} */
 var quiz: Quiz;
+
+var storeWindow: StoreWindow;
 
 declare class GameChat {
     // $CHAT_TEXTAREA_CONTAINER: r;
@@ -339,4 +339,199 @@ declare class Quiz {
     videoReady: function;
     videoTimerBar: TimerBar;
     viewSettings: function;
+}
+
+declare class StoreAvatar  { 
+
+    $content: any;
+    $topIcon: any;
+    AVATAR_ICON_TEMPLATE: string;
+    _inFilter: boolean;
+    _unlocked: boolean;
+    active: number;
+    artist: string;
+    avatarId: number;
+    avatarName: string;
+    backgroundSrc: string;
+    backgroundUnlocked: any;
+    backgroundVert: string;
+    badgeFileName: string;
+    badgeName: string;
+    buildTopIconDomObject: function;
+    characterId: any;
+    colorCount: any;
+    colorMap: Object;
+    colorUnlocked: any;
+    colors: Array;
+    colorsLoaded: boolean;
+    completeName: any;
+    constructor();
+    defaultAvatar: number;
+    defaultColorId: number;
+    defaultColorName: string;
+    displayColors: function;
+    exclusive: number;
+    filterUpdate: function;
+    getColorUnlocked: function;
+    gotSkins: boolean;
+    handleDisplayed: function;
+    handleRemoved: function;
+    iconSelected: undefined;
+    inFilter: any;
+    initPreviewTile: function;
+    legacy: number;
+    limited: number;
+    loadTopIcon: function;
+    lore: string;
+    mainContainer: StoreMainContainer;
+    newLock: function;
+    newUnlock: function;
+    notePrice: number;
+    optionName: string;
+    outfitId: number;
+    outfitName: string;
+    parentCharacter: StoreCharacter;
+    patreonTierToUnlock: null;
+    realMoneyPrice: number;
+    sizeModifier: number;
+    sizeModifierClass: any;
+    sortColors: function;
+    src: string;
+    srcSet: string;
+    ticketTier: null;
+    tile: StorePreviewTile;
+    tileLoaded: boolean;
+    topIcon: StoreTopIconSkin;
+    topIconImagePreloader: PreloadImage;
+    typeName: any;
+    unlocked: any;
+    unlockedColorCount: any;
+    unlockedColors: Object;
+    updateStatus: function;
+    updateTextSize: function;
+    world: string;
+    }
+
+declare class StoreCharacter {
+
+    $topIcon: any;
+    DEFAULT_STORE_AVATAR_ICON_NAME: string;
+    avatars: Array<StoreAvatar>;
+    characterId: number;
+    clearAvatarSelection: function;
+    constructor();
+    defaultAvatar: StoreAvatar;
+    filterUpdate: function;
+    getAvatar: function;
+    inFilter: undefined;
+    intPreviewTiles: function;
+    loadAvatarTopIcons: function;
+    newLock: function;
+    newUnlock: function;
+    open: undefined;
+    previewTilesInited: boolean;
+    sortAvatars: function;
+    topIcon: StoreTopIcon;
+    updateStatus: function;
+    width: any;
+}
+
+declare class StoreTopBar {
+    $topBarContentContainer: r;
+    $topBarContentContainerInner: r;
+    SCROLL_BAR_OFFSET: number;
+    SCROLL_CORRECTION: number;
+    avatarCharacterIdMap: Object;
+    backgrounds: StoreBackgroundController;
+    characters: Array<StoreCharacter>;
+    clearAvatarSelection: function;
+    closeAll: function;
+    constructor();
+    disable: function;
+    emotes: StoreEmoteController;
+    enable: function;
+    favorites: StoreFavorites;
+    filterUpdate: function;
+    getAllUniqueBackgrounds: function;
+    getAvatar: function;
+    getAvatarId: function;
+    getCharacter: function;
+    getUniqueBackground: function;
+    handleCategorySelected: function;
+    iconsLoaded: boolean;
+    loadCharacters: function;
+    selectedCategory: null;
+    tickets: StoreTickets;
+    updateLayout: function;
+    updateScrollContainerWidth: function;
+}
+
+declare class StoreWindow {
+    $avatarTokenText: r;
+    $rhythmText: r;
+    $storeIconAvatarContainer: r;
+    $window: r;
+    REQUIRED_COUNT_FOR_BONUS: number;
+    _activeAvatarBackground: Object;
+    _avatarTokens: number;
+    _inBackgroundMode: boolean;
+    _open: boolean;
+    _rhythm: number;
+    activeAvatar: any;
+    activeBackground: any;
+    avatarColumn: StoreAvatarColumn;
+    avatarIconDisplayHandler: AvatarHeadDisplayHandler;
+    avatarTokenBubbleTextController: BubbleTextController;
+    avatarTokens: any;
+    avatarUnlockCount: Object;
+    backgroundLockListener: Listener;
+    backgroundUnlockListner: Listener;
+    characterUnlockCount: Object;
+    checkResonanceTargetInactive: function;
+    checkRollTargetIsResonaceTarget: function;
+    checkRollWillLoseResonancePoints: function;
+    constructor();
+    disableTopBar: function;
+    emoteLockedListner: Listener;
+    emoteUnlockListner: Listener;
+    enableTopBar: function;
+    filterChangeEvent: function;
+    getAllAvatars: function;
+    getAllEmotes: function;
+    getAllUniqueBackgrounds: function;
+    getAvatar: function;
+    getAvatarBonusUnlocked: function;
+    getAvatarFromAvatarId: function;
+    getEmote: function;
+    getFavoriteId: function;
+    getUniqueBackground: function;
+    gotResonanceTarget: any;
+    handleAvatarSelected: function;
+    handleUniqueBackgroundSelected: function;
+    hide: function;
+    inBackgroundMode: any;
+    lockListner: Listener;
+    mainContainer: StoreMainContainer;
+    messageContainEmote: function;
+    newFavoriteListener: Listener;
+    open: any;
+    removeFavoriteListener: Listener;
+    reset: function;
+    resize: function;
+    resonanceSystem: StoreResonanceSystem;
+    rhythm: any;
+    rhythmBubbleTextController: BubbleTextController;
+    setResonanceTargetListener: Listener;
+    setStoreIconAvatar: function;
+    setup: function;
+    show: function;
+    showSkin: function;
+    showTicketStore: function;
+    storeFilter: StoreFilter;
+    toggle: function;
+    toggleBackgroundSelect: function;
+    topBar: StoreTopBar;
+    unlockListner: Listener;
+    unlockedEmoteIds: Array;
+    useAvatarListener: Listener;
 }
