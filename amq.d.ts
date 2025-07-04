@@ -1,5 +1,27 @@
 declare function $(_: any): JQuery;
 
+declare class SongResult {
+    /* List of this room's player IDs per section */
+    groupMap: Record<1, number[]>;
+
+    players: {
+        correct: boolean;
+        gamePlayerId: number;
+    }[];
+
+    songInfo: {
+        altAnimeNames: string[];
+        altAnimeNamesAnswers: string[];
+        animeDifficulty: number;
+        animeGenre: string[];
+        animeNames: {
+            english:string;
+            romaji: string;
+        };
+        artist:string;
+    }
+}
+
 /* AMQ globals: */
 
 /** Name of logged in user. */

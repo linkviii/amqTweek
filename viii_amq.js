@@ -302,7 +302,19 @@ viii.getScore = function () {
 };
 
 // -------------------------
-viii.logAnsInChat = function () {
+
+
+viii.onSongResult = function (/** @type {SongResult} */ result) {
+
+	/* Some amount of time to let the amq listener run before this.
+	 * Because currently looking at the r-esult of the changed dom.
+	 */
+	const delay = 100;
+	setTimeout(() => { viii.logAnsInChat(result); }, delay);
+};
+
+viii.logAnsInChat = function (/** @type {SongResult} */ result) {
+	// console.log(result);
 
 	// For local messages it seems AMQ just injects html.
 	// No reason not to do that I guess. 
@@ -556,7 +568,9 @@ viii.attach = function () {
 	viii.isAttached = true;
 	let [theWatched, onThe] = viii.getWatched();
 	// @ts-ignore
-	theWatched.on("DOMSubtreeModified", onThe, viii.logAnsInChat);
+
+	const songResultListener = new Listener("answer results", (it) => viii.onSongResult(it));
+	songResultListener.bindListener();
 
 	onkeyup = viii.parseKeysUp;
 	onkeydown = viii.parseKeysDown;
