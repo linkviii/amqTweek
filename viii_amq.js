@@ -22,6 +22,9 @@
 
 /* Var will let me copy paste this script into the console */
 var viii = {};
+if (undefined === unsafeWindow) {
+	var unsafeWindow = window;
+}
 unsafeWindow.viii = viii;
 
 // -------------------------
@@ -31,7 +34,26 @@ viii.roundsPlayed = 0;
 viii.chatModsHidden = false;
 
 viii.lvl2 = false;
-// -------------------------
+// ----------------------------------------------------------------------------
+viii.findQuizDupes = function () {
+	var set = {};
+	for (let block_i in customQuizCreator.builder.ruleBlockMap) {
+		let block = customQuizCreator.builder.ruleBlockMap[block_i];
+		for (let song of block.currentBlocks) {
+			// console.log(song.songEntry.name)
+			// console.log(`\t by ${song.songEntry.artist.name}`)
+			// console.log(`\tsongid  ${song.songEntry.songId}`)
+			// console.log(`\tgroupid ${song.songEntry.songGroupId}`)
+			// console.log(``)
+
+			if (undefined !== set[song.songEntry.songId]) {
+				console.log(`Duplicate: ${song.songEntry.name} by ${song.songEntry.artist.name}`);
+			};
+			set[song.songEntry.songId] = song;
+		}
+	}
+};
+// ----------------------------------------------------------------------------
 
 /** Wrap str with my span I can hide ? */
 viii.viiiTag = function (str) {
@@ -115,16 +137,64 @@ viii.styleGeneral = function () {
 		// 👍👎
 		`.qpSingleRateContainer { background: transparent; border: azure 2px solid; }`,
 		// Quiz maker
+		// -- Right side
 		`.cqcSongBlock .cqcBlockMainContainer { background: black }`,
 		`.cqcSongAnimeInfo {
 			text-decoration: underline dotted gray;
+			margin-bottom: 1px;
 		}`,
 		`.cqcSongNameInfo {
+			font-size: 0px;
 			margin-left: 20px;
+		}
+		.cqcSongNameInfo .cqcSongName {
+			font-size: 14px;
+		}
+		.cqcSongNameInfo .cqcSongArtist {
+			display: block;
+			font-size: 12px;		
+			line-height: 10px
+		}`,
+		// ... Make the selected block stand out
+		`.selected .cqcRuleBlockHeader {
+			background: #d5b719;
+		}
+		.selected .cqcRuleBlockFooter {
+			background: #d5b719;	
+		}
+		.selected .cqcRuleBlockRightEdge {
+			background: #d5b719;	
 		}`,
 		`.cqcRuleBlock.selected {
-			box-shadow: 0 0 10px 4px rgb(247, 255, 0);
+			box-shadow: unset;
 		}`,
+		// ... Give just a bit of space between songs
+		`.cqcBlock.cqcSongBlock {
+			margin-bottom: 3px;
+		}`,
+		// -- Left side
+		`.elSongInfoContainer {
+			background: black;
+		}`,
+		`.elAnimeEntryExtraInfo {
+			background: #191635;
+		}`,
+		// ... Row that says "Songs". Throw it out.
+		`.elAnimeEntrySongContainer > .elFlexRow {
+			display: none;
+		}`,
+		// ... Add more division between songs
+		`.elSongEntry {
+			border-bottom: #919191 3px solid;
+		}`,
+		// ... Make the play button stand out more
+		//     Does not look better but at least more functional imo
+		`.elSongSamplePlayButton {
+			border-radius: unset;
+			background: #fff09e;
+			border: 2px solid grey;
+		}`,
+
 
 	].join("\n");
 
